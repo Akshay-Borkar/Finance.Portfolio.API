@@ -41,10 +41,4 @@
     <Project Path="shared/Finance.Contracts/Finance.Contracts.csproj" />
     <Project Path="shared/Finance.SharedKernel.Auth/Finance.SharedKernel.Auth.csproj" />
   </Folder>
-  <Project Path="Finance.Portfolio.API/Finance.Portfolio.API.csproj" />
-  <Project Path="Finance.StockMarket.Application/Finance.StockMarket.Application.csproj" />
-  <Project Path="Finance.StockMarket.Domain/Finance.StockMarket.Domain.csproj" />
-  <Project Path="Finance.StockMarket.Identity/Finance.StockMarket.Identity.csproj" />
-  <Project Path="Finance.StockMarket.Infrastructure/Finance.StockMarket.Infrastructure.csproj" />
-  <Project Path="Finance.StockMarket.Persistence/Finance.StockMarket.Persistence.csproj" />
 </Solution>

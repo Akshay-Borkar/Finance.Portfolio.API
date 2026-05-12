@@ -41,29 +41,6 @@ services:
       retries: 10
       start_period: 20s
 
-  # ── Monolith (kept alive during migration) ───────────────────────────────────
-
-  monolith:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      ASPNETCORE_URLS: "http://+:8080"
-      ConnectionStrings__FinanceStockDatabaseConnectionString: "Server=${SQL_SERVER},1433;Database=FinanceStockDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
-      ConnectionStrings__Redis: "${REDIS_CONNECTION}"
-      JwtSettings__Key: "${JWT_SECRET}"
-      JwtSettings__Issuer: "${JWT_ISSUER}"
-      JwtSettings__Audience: "${JWT_AUDIENCE}"
-      JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
-      EmailSettings__ApiKey: "${SENDGRID_API_KEY}"
-      EmailSettings__FromAddress: "${SENDGRID_FROM_ADDRESS}"
-      EmailSettings__FromName: "${SENDGRID_FROM_NAME}"
-    depends_on:
-      sqlserver:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
   # ── API Gateway ────────────────────────────────────────────────────────────
 
   gateway:
@@ -78,7 +55,12 @@ services:
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
     depends_on:
-      - monolith
+      - identity-svc
+      - portfolio-svc
+      - marketdata-svc
+      - alert-svc
+      - sentiment-svc
+      - notification-svc
 
   # ── Microservices (added phase by phase) ────────────────────────────────────
 

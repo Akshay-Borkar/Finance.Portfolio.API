@@ -4,10 +4,6 @@ version: "3.9"
 # Used in development only.
 
 services:
-  monolith:
-    ports:
-      - "5059:8080"
-
   # Phase 2 ✅
   identity-svc:
     ports:

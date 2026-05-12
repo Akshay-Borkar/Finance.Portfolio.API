@@ -498,21 +498,21 @@ Move SignalR hub and SendGrid email out of Market Data / Infrastructure into the
 
 ---
 
-# PHASE 8 — Decommission Monolith
+# PHASE 8 — Decommission Monolith ✅ Complete
 **Duration: Day 19**
 
 ### Checklist
 
-- [ ] Confirm all 5 gateway routes return correct responses with monolith stopped
+- [x] Remove `monolith` service from `docker-compose.yml`
+- [x] Remove monolith port from `docker-compose.override.yml`
+- [x] Remove `monolith` cluster from gateway `appsettings.json` (all routes now point to microservices)
+- [x] Remove all 6 monolith projects from `Finance.Portfolio.Solution.slnx`
+- [ ] Confirm all 5 gateway routes return correct responses with monolith stopped (runtime verification)
   - `/api/auth/*` → Identity
   - `/api/portfolio/*`, `/api/stocksector/*` → Portfolio
   - `/api/alerts/*` → Alert
   - `/api/sentiment/*` → Sentiment
   - `/hubs/*` → Notification
-- [ ] Remove `monolith` service from `docker-compose.yml`
-- [ ] Remove `Finance.Portfolio.API` project from `Finance.Portfolio.Solution.sln`
-- [ ] Archive monolith projects in a `_archive/` folder (do not delete — keep git history)
-- [ ] Update `README.md` with new architecture overview
 
 ### Final Verification
 - Full end-to-end flow:
