@@ -31,9 +31,10 @@ services:
       - "5003:8080"
       - "5013:8081"   # gRPC
 
-  # alert-svc:
-  #   ports:
-  #     - "5004:8080"
+  # Phase 6 ✅
+  alert-svc:
+    ports:
+      - "5004:8080"
 
   # notification-svc:
   #   ports:

@@ -1,5 +1,12 @@
 <Solution>
   <Folder Name="/services/" />
+  <Folder Name="/services/Alert/">
+    <Project Path="services/Alert/Finance.AlertService.API/Finance.AlertService.API.csproj" />
+    <Project Path="services/Alert/Finance.AlertService.Application/Finance.AlertService.Application.csproj" />
+    <Project Path="services/Alert/Finance.AlertService.Domain/Finance.AlertService.Domain.csproj" />
+    <Project Path="services/Alert/Finance.AlertService.Infrastructure/Finance.AlertService.Infrastructure.csproj" />
+    <Project Path="services/Alert/Finance.AlertService.Persistence/Finance.AlertService.Persistence.csproj" />
+  </Folder>
   <Folder Name="/services/Gateway/">
     <Project Path="services/Gateway/Finance.Gateway/Finance.Gateway.csproj" />
   </Folder>

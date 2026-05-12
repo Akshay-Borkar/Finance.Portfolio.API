@@ -153,7 +153,27 @@ services:
       marketdata-svc:
         condition: service_started
 
-  # alert-svc,
+  # Phase 6 ✅
+  alert-svc:
+    build:
+      context: .
+      dockerfile: services/Alert/Finance.AlertService.API/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__AlertDb: "Server=${SQL_SERVER},1433;Database=AlertDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
+      JwtSettings__Key: "${JWT_SECRET}"
+      JwtSettings__Issuer: "${JWT_ISSUER}"
+      JwtSettings__Audience: "${JWT_AUDIENCE}"
+      JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      RabbitMq__Host: "${RABBITMQ_HOST}"
+      RabbitMq__Username: "${RABBITMQ_USERNAME}"
+      RabbitMq__Password: "${RABBITMQ_PASSWORD}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
   # notification-svc — uncommented as each phase is completed.
 
 volumes:
