@@ -10,6 +10,11 @@
     <Project Path="services/Identity/Finance.IdentityService.Infrastructure/Finance.IdentityService.Infrastructure.csproj" />
     <Project Path="services/Identity/Finance.IdentityService.Persistence/Finance.IdentityService.Persistence.csproj" />
   </Folder>
+  <Folder Name="/services/MarketData/">
+    <Project Path="services/MarketData/Finance.MarketDataService.API/Finance.MarketDataService.API.csproj" />
+    <Project Path="services/MarketData/Finance.MarketDataService.Application/Finance.MarketDataService.Application.csproj" />
+    <Project Path="services/MarketData/Finance.MarketDataService.Infrastructure/Finance.MarketDataService.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/services/Sentiment/">
     <Project Path="services/Sentiment/Finance.SentimentService.API/Finance.SentimentService.API.csproj" />
     <Project Path="services/Sentiment/Finance.SentimentService.Infrastructure/Finance.SentimentService.Infrastructure.csproj" />

@@ -1,0 +1,6 @@
+@Finance.MarketDataService.API_HostAddress = http://localhost:5198
+
+GET {{Finance.MarketDataService.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

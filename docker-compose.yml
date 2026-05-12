@@ -109,7 +109,25 @@ services:
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
 
-  # portfolio-svc, marketdata-svc, alert-svc,
+  # Phase 4 ✅
+  marketdata-svc:
+    build:
+      context: .
+      dockerfile: services/MarketData/Finance.MarketDataService.API/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__Redis: "${REDIS_CONNECTION}"
+      RabbitMq__Host: "${RABBITMQ_HOST}"
+      RabbitMq__Username: "${RABBITMQ_USERNAME}"
+      RabbitMq__Password: "${RABBITMQ_PASSWORD}"
+      Hangfire__UseRedis: "true"
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # portfolio-svc, alert-svc,
   # notification-svc — uncommented as each phase is completed.
 
 volumes:
