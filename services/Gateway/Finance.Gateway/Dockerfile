@@ -5,7 +5,6 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy shared projects first (referenced by gateway)
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
 COPY services/Gateway/Finance.Gateway/ services/Gateway/Finance.Gateway/
 
