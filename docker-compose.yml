@@ -174,7 +174,29 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  # notification-svc — uncommented as each phase is completed.
+  # Phase 7 ✅
+  notification-svc:
+    build:
+      context: .
+      dockerfile: services/Notification/Finance.NotificationService.API/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__Redis: "${REDIS_CONNECTION}"
+      JwtSettings__Key: "${JWT_SECRET}"
+      JwtSettings__Issuer: "${JWT_ISSUER}"
+      JwtSettings__Audience: "${JWT_AUDIENCE}"
+      JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      EmailSettings__ApiKey: "${SENDGRID_API_KEY}"
+      EmailSettings__FromAddress: "${SENDGRID_FROM_ADDRESS}"
+      EmailSettings__FromName: "${SENDGRID_FROM_NAME}"
+      RabbitMq__Host: "${RABBITMQ_HOST}"
+      RabbitMq__Username: "${RABBITMQ_USERNAME}"
+      RabbitMq__Password: "${RABBITMQ_PASSWORD}"
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   sqldata:

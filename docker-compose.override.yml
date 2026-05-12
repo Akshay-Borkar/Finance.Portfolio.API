@@ -36,6 +36,7 @@ services:
     ports:
       - "5004:8080"
 
-  # notification-svc:
-  #   ports:
-  #     - "5006:8080"
+  # Phase 7 ✅
+  notification-svc:
+    ports:
+      - "5006:8080"

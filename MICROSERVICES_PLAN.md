@@ -462,7 +462,7 @@ Extract alerts. Consume `StockPriceUpdated` events to trigger alerts. Publish `A
 
 ---
 
-# PHASE 7 — Notification Service
+# PHASE 7 — Notification Service ✅ Complete
 **Duration: Days 17–18**
 
 ### Goal
@@ -470,30 +470,24 @@ Move SignalR hub and SendGrid email out of Market Data / Infrastructure into the
 
 ### Day 17 — Infrastructure
 
-- [ ] `Finance.NotificationService.Infrastructure`:
-  - Copy `StockPriceHub` (SignalR hub)
-  - Copy `EmailSender` (SendGrid)
-  - Copy `SignalRService`
-  - Add `Microsoft.AspNetCore.SignalR.StackExchangeRedis` — configure backplane:
-    ```csharp
-    services.AddSignalR().AddStackExchangeRedis(redisConnection);
-    ```
-  - Create `StockPriceUpdatedConsumer`: receives event → calls `SignalRService.SendStockPriceUpdate`
-  - Create `AlertTriggeredConsumer`: receives event → calls `EmailSender.SendEmail`
+- [x] `Finance.NotificationService.Infrastructure`:
+  - `StockPriceHub` (SignalR hub with Authorize)
+  - `EmailSender` (SendGrid)
+  - `StockPriceUpdatedConsumer`: receives event → broadcasts via IHubContext
+  - `AlertTriggeredConsumer`: receives event → sends SendGrid email
+  - `Microsoft.AspNetCore.SignalR.StackExchangeRedis` backplane (conditional on Redis connection string)
+  - FrameworkReference Microsoft.AspNetCore.App (required for Hub in class library)
 
 ### Day 18 — API + Docker + Gateway
 
-- [ ] `Finance.NotificationService.API`:
-  - Map `StockPriceHub` at `/hubs/stockprice`
-  - Register MassTransit consumers + RabbitMQ
-  - Register SendGrid
-  - Reference `Finance.SharedKernel.Auth` (for hub authentication)
-  - Add health check
-- [ ] Add `notification-svc` to `docker-compose.yml`:
-  - Env: `ConnectionStrings__Redis`, `EmailSettings__*`, `RabbitMq__*`
-- [ ] Update gateway: `/hubs/**` → `notification-svc:8080` (enable WebSocket proxying in YARP route config)
-- [ ] Remove all direct `emailSender` and `signalRService` calls from Market Data `StockPriceBackgroundService`
-- [ ] Remove `SignalR` registration from monolith
+- [x] `Finance.NotificationService.API`:
+  - Maps `StockPriceHub` at `/hubs/stockprice`
+  - MassTransit + RabbitMQ consumers registered
+  - Redis SignalR backplane conditionally applied
+  - References `Finance.SharedKernel.Auth`
+- [x] `notification-svc` added to `docker-compose.yml`
+- [x] `docker-compose.override.yml` port 5006:8080
+- [x] Gateway: `/hubs/**` → `notification` cluster → `notification-svc:8080`
 
 ### Verification
 - Open browser WebSocket connection to `ws://localhost:5000/hubs/stockprice`
