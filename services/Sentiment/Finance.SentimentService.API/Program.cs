@@ -8,8 +8,7 @@ builder.Services.AddSentimentInfrastructure();
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
@@ -22,12 +21,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.MapOpenApi();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();

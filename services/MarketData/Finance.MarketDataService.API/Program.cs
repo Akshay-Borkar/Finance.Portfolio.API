@@ -9,8 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMarketDataInfrastructure(builder.Configuration);
 builder.Services.AddGrpc();
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", p =>
@@ -41,12 +40,7 @@ using (var scope = app.Services.CreateScope())
         Cron.Weekly(DayOfWeek.Monday, 9, 0));
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.MapOpenApi();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<ExceptionMiddleware>();
 

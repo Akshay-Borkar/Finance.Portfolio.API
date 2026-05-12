@@ -12,8 +12,7 @@ builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
@@ -33,12 +32,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+app.MapOpenApi();
 app.UseCors("CorsPolicy");
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
