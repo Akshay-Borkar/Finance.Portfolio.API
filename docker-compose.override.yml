@@ -1,38 +1,28 @@
-version: "3.9"
-
 # Exposes individual service ports for direct debugging without going through gateway.
 # Used in development only.
 
 services:
-  # Phase 2 ✅
   identity-svc:
     ports:
       - "5001:8080"
 
-  # Phase 3 ✅
   sentiment-svc:
     ports:
       - "5005:8080"
 
-  # Uncomment each block as the service is extracted:
-
-  # Phase 5 ✅
   portfolio-svc:
     ports:
       - "5002:8080"
 
-  # Phase 4 ✅
   marketdata-svc:
     ports:
       - "5003:8080"
       - "5013:8081"   # gRPC
 
-  # Phase 6 ✅
   alert-svc:
     ports:
       - "5004:8080"
 
-  # Phase 7 ✅
   notification-svc:
     ports:
       - "5006:8080"
