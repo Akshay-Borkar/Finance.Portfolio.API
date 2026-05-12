@@ -127,7 +127,33 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  # portfolio-svc, alert-svc,
+  # Phase 5 ✅
+  portfolio-svc:
+    build:
+      context: .
+      dockerfile: services/Portfolio/Finance.PortfolioService.API/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__PortfolioDb: "Server=${SQL_SERVER},1433;Database=PortfolioDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
+      JwtSettings__Key: "${JWT_SECRET}"
+      JwtSettings__Issuer: "${JWT_ISSUER}"
+      JwtSettings__Audience: "${JWT_AUDIENCE}"
+      JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      MarketData__GrpcAddress: "http://marketdata-svc:8081"
+      RabbitMq__Host: "${RABBITMQ_HOST}"
+      RabbitMq__Username: "${RABBITMQ_USERNAME}"
+      RabbitMq__Password: "${RABBITMQ_PASSWORD}"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      marketdata-svc:
+        condition: service_started
+
+  # alert-svc,
   # notification-svc — uncommented as each phase is completed.
 
 volumes:

@@ -15,6 +15,13 @@
     <Project Path="services/MarketData/Finance.MarketDataService.Application/Finance.MarketDataService.Application.csproj" />
     <Project Path="services/MarketData/Finance.MarketDataService.Infrastructure/Finance.MarketDataService.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/services/Portfolio/">
+    <Project Path="services/Portfolio/Finance.PortfolioService.API/Finance.PortfolioService.API.csproj" />
+    <Project Path="services/Portfolio/Finance.PortfolioService.Application/Finance.PortfolioService.Application.csproj" />
+    <Project Path="services/Portfolio/Finance.PortfolioService.Domain/Finance.PortfolioService.Domain.csproj" />
+    <Project Path="services/Portfolio/Finance.PortfolioService.Infrastructure/Finance.PortfolioService.Infrastructure.csproj" />
+    <Project Path="services/Portfolio/Finance.PortfolioService.Persistence/Finance.PortfolioService.Persistence.csproj" />
+  </Folder>
   <Folder Name="/services/Sentiment/">
     <Project Path="services/Sentiment/Finance.SentimentService.API/Finance.SentimentService.API.csproj" />
     <Project Path="services/Sentiment/Finance.SentimentService.Infrastructure/Finance.SentimentService.Infrastructure.csproj" />

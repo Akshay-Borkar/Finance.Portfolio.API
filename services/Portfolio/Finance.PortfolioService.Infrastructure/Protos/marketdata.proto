@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option csharp_namespace = "Finance.MarketDataService.API.Protos";
+
+package marketdata;
+
+service MarketDataGrpc {
+  rpc GetCurrentPrice (GetPriceRequest)  returns (GetPriceResponse);
+  rpc GetOhlcv        (GetOhlcvRequest)  returns (GetOhlcvResponse);
+}
+
+message GetPriceRequest {
+  string ticker = 1;
+}
+
+message GetPriceResponse {
+  string ticker    = 1;
+  double price     = 2;
+  int64  timestamp = 3;
+}
+
+message GetOhlcvRequest {
+  string ticker   = 1;
+  string interval = 2;
+  string range    = 3;
+}
+
+message GetOhlcvResponse {
+  repeated OhlcvBar bars = 1;
+}
+
+message OhlcvBar {
+  int64  time   = 1;
+  double open   = 2;
+  double high   = 3;
+  double low    = 4;
+  double close  = 5;
+  int64  volume = 6;
+}

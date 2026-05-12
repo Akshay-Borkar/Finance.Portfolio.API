@@ -661,7 +661,7 @@ REDIS_CONNECTION=redis:6379
 | Phase 2 — Identity Service | ✅ Complete | 2026-05-12 |
 | Phase 3 — Sentiment Service | ✅ Complete | 2026-05-12 |
 | Phase 4 — Market Data Service | ✅ Complete | 2026-05-12 |
-| Phase 5 — Portfolio Service | ⬜ Not Started | — |
+| Phase 5 — Portfolio Service | ✅ Complete | 2026-05-12 |
 | Phase 6 — Alert Service | ⬜ Not Started | — |
 | Phase 7 — Notification Service | ⬜ Not Started | — |
 | Phase 8 — Decommission Monolith | ⬜ Not Started | — |

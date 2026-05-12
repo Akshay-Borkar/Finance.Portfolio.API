@@ -20,9 +20,10 @@ services:
 
   # Uncomment each block as the service is extracted:
 
-  # portfolio-svc:
-  #   ports:
-  #     - "5002:8080"
+  # Phase 5 ✅
+  portfolio-svc:
+    ports:
+      - "5002:8080"
 
   # Phase 4 ✅
   marketdata-svc:
