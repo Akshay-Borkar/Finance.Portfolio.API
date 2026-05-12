@@ -1,0 +1,27 @@
+<Solution>
+  <Folder Name="/services/" />
+  <Folder Name="/services/Gateway/">
+    <Project Path="services/Gateway/Finance.Gateway/Finance.Gateway.csproj" />
+  </Folder>
+  <Folder Name="/services/Identity/">
+    <Project Path="services/Identity/Finance.IdentityService.API/Finance.IdentityService.API.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Application/Finance.IdentityService.Application.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Domain/Finance.IdentityService.Domain.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Infrastructure/Finance.IdentityService.Infrastructure.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Persistence/Finance.IdentityService.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/services/Sentiment/">
+    <Project Path="services/Sentiment/Finance.SentimentService.API/Finance.SentimentService.API.csproj" />
+    <Project Path="services/Sentiment/Finance.SentimentService.Infrastructure/Finance.SentimentService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/Finance.Contracts/Finance.Contracts.csproj" />
+    <Project Path="shared/Finance.SharedKernel.Auth/Finance.SharedKernel.Auth.csproj" />
+  </Folder>
+  <Project Path="Finance.Portfolio.API/Finance.Portfolio.API.csproj" />
+  <Project Path="Finance.StockMarket.Application/Finance.StockMarket.Application.csproj" />
+  <Project Path="Finance.StockMarket.Domain/Finance.StockMarket.Domain.csproj" />
+  <Project Path="Finance.StockMarket.Identity/Finance.StockMarket.Identity.csproj" />
+  <Project Path="Finance.StockMarket.Infrastructure/Finance.StockMarket.Infrastructure.csproj" />
+  <Project Path="Finance.StockMarket.Persistence/Finance.StockMarket.Persistence.csproj" />
+</Solution>

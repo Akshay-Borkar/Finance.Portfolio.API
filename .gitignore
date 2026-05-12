@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 # Claude Code
 .claude/
+
+# Microservices — local secrets (never commit)
+.env
+!.env.example

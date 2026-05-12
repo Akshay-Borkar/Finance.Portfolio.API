@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Finance.IdentityService.Application\Finance.IdentityService.Application.csproj" />
+    <ProjectReference Include="..\Finance.IdentityService.Infrastructure\Finance.IdentityService.Infrastructure.csproj" />
+    <ProjectReference Include="..\Finance.IdentityService.Persistence\Finance.IdentityService.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
+  </ItemGroup>
+
+</Project>

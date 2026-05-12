@@ -1,36 +1,3 @@
-﻿using Finance.StockMarket.Application.Contracts.SentimentAnalysis;
-using Finance.StockMarket.Application.Contracts.YahooFinance;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Finance.Portfolio.API.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    [Authorize]
-    public class SentimentController : ControllerBase
-    {
-        private readonly ISentimentAnalysisService _sentimentService;
-        private readonly IYahooFinanceService _yahooFinanceService;
-
-        public SentimentController(ISentimentAnalysisService sentimentService, IYahooFinanceService yahooFinanceService)
-        {
-            _sentimentService = sentimentService;
-            _yahooFinanceService = yahooFinanceService;
-        }
-
-        [HttpGet("analyze-yahoo-news/{ticker}")]
-        public async Task<IActionResult> AnalyzeYahooFinanceNews(string ticker)
-        {
-            var newsArticles = await _yahooFinanceService.FetchLatestStockNews(ticker);
-            List<object> results = new();
-
-            foreach (var article in newsArticles)
-            {
-                results.Add(new { Article = article, Sentiment = _sentimentService.PredictSentiment(article) });
-            }
-
-            return Ok(results);
-        }
-    }
-}
+// Extracted to Finance.SentimentService — routed via gateway to sentiment-svc:8080
+// This file is kept as a placeholder during the strangler fig migration.
+// Remove entirely in Phase 8 (monolith decommission).
