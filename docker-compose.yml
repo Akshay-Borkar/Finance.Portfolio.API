@@ -180,5 +180,16 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  # ── Frontend ───────────────────────────────────────────────────────────────
+
+  frontend:
+    build:
+      context: ../Finance.Portfolio.Web
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway
+
 volumes:
   sqldata:
