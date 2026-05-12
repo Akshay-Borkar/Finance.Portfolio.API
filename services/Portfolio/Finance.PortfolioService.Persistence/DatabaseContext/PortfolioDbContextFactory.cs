@@ -8,7 +8,7 @@ public class PortfolioDbContextFactory : IDesignTimeDbContextFactory<PortfolioDb
     public PortfolioDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<PortfolioDbContext>();
-        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=PortfolioDB;User=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=PortfolioDB;Integrated Security=True;TrustServerCertificate=True");
         return new PortfolioDbContext(optionsBuilder.Options);
     }
 }

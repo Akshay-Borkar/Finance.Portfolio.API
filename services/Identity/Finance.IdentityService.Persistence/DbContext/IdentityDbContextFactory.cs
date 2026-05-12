@@ -9,7 +9,7 @@ public class IdentityDbContextFactory : IDesignTimeDbContextFactory<IdentityDbCo
     {
         var optionsBuilder = new DbContextOptionsBuilder<IdentityDbContext>();
         optionsBuilder.UseSqlServer(
-            "Server=localhost,1433;Database=IdentityDB;User=sa;Password=YourStrong!Passw0rd;TrustServerCertificate=True");
+            "Server=(localdb)\\MSSQLLocalDB;Database=IdentityDB;Integrated Security=True;TrustServerCertificate=True");
         return new IdentityDbContext(optionsBuilder.Options);
     }
 }
