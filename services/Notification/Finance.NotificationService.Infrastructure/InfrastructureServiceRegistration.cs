@@ -34,7 +34,7 @@ public static class InfrastructureServiceRegistration
             // Azure Service Bus configuration
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                cfg.Host(configuration["ServiceBus__ConnectionString"]);
+                cfg.Host(configuration["ServiceBusConnectionString"]);
                 cfg.ConfigureEndpoints(ctx);
             });
         });
