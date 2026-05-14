@@ -7,11 +7,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
-var redisConnection = builder.Configuration.GetConnectionString("Redis");
-
 var signalR = builder.Services.AddSignalR();
-if (!string.IsNullOrEmpty(redisConnection))
-    signalR.AddStackExchangeRedis(redisConnection);
+
+var redisEndpoint = builder.Configuration["RedisEndpoint"];
+var redisPassword = builder.Configuration["RedisPassword"];
+
+if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
+{
+    signalR.AddStackExchangeRedis(options =>
+    {
+        options.ConnectionFactory = async writer =>
+        {
+            var config = new StackExchange.Redis.ConfigurationOptions
+            {
+                AbortOnConnectFail = false,
+                Ssl = true,
+                Password = redisPassword,
+                ConnectTimeout = 5000,
+                SyncTimeout = 5000
+            };
+            config.EndPoints.Add(redisEndpoint);
+            var connection = await StackExchange.Redis
+                .ConnectionMultiplexer.ConnectAsync(config, writer);
+            return connection;
+        };
+    });
+}
 
 builder.Services.AddCors(options =>
 {

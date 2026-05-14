@@ -20,16 +20,28 @@ public static class InfrastructureServiceRegistration
         IConfiguration configuration)
     {
         // ── Redis ─────────────────────────────────────────────────────────────
-        var redisConn = configuration.GetConnectionString("Redis") ?? "localhost:6379";
         IConnectionMultiplexer? redis = null;
-        try
+
+        var redisEndpoint = configuration["RedisEndpoint"];
+        var redisPassword = configuration["RedisPassword"];
+
+        if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
         {
-            var opts = ConfigurationOptions.Parse(redisConn);
-            opts.ConnectTimeout = 2000;
-            opts.AbortOnConnectFail = false;
-            redis = ConnectionMultiplexer.Connect(opts);
+            var redisConfig = new ConfigurationOptions
+            {
+                AbortOnConnectFail = false,
+                Ssl = true,
+                Password = redisPassword,
+                ConnectTimeout = 5000
+            };
+            redisConfig.EndPoints.Add(redisEndpoint);
+
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(redisConfig);
+            }
+            catch { /* fall back to in-memory below */ }
         }
-        catch { /* fall back to in-memory below */ }
 
         bool redisAvailable = redis?.IsConnected == true;
 
