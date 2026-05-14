@@ -60,20 +60,27 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IStockQuoteService, StockQuoteService>();
         services.AddScoped<IStockPriceUpdateJob, StockPriceUpdateJob>();
 
-        // ── MassTransit + RabbitMQ ────────────────────────────────────────────
+        // ── MassTransit ───────────────────────────────────────────────────────
         services.AddMassTransit(x =>
         {
             x.AddConsumer<StockAddedConsumer>();
             x.AddConsumer<StockRemovedConsumer>();
 
-            x.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(configuration["RabbitMq:Host"] ?? "localhost", "/", h =>
-                {
-                    h.Username(configuration["RabbitMq:Username"] ?? "guest");
-                    h.Password(configuration["RabbitMq:Password"] ?? "guest");
-                });
+            // RabbitMQ configuration
+            // x.UsingRabbitMq((ctx, cfg) =>
+            // {
+            //     cfg.Host(configuration["RabbitMq:Host"] ?? "localhost", "/", h =>
+            //     {
+            //         h.Username(configuration["RabbitMq:Username"] ?? "guest");
+            //         h.Password(configuration["RabbitMq:Password"] ?? "guest");
+            //     });
+            //     cfg.ConfigureEndpoints(ctx);
+            // });
 
+            // Azure Service Bus configuration
+            x.UsingAzureServiceBus((ctx, cfg) =>
+            {
+                cfg.Host(configuration["ServiceBus__ConnectionString"]);
                 cfg.ConfigureEndpoints(ctx);
             });
         });

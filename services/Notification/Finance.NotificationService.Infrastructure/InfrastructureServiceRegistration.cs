@@ -18,16 +18,23 @@ public static class InfrastructureServiceRegistration
             x.AddConsumer<StockPriceUpdatedConsumer>();
             x.AddConsumer<AlertTriggeredConsumer>();
 
-            x.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(
-                    configuration["RabbitMq:Host"] ?? "rabbitmq",
-                    h =>
-                    {
-                        h.Username(configuration["RabbitMq:Username"] ?? "guest");
-                        h.Password(configuration["RabbitMq:Password"] ?? "guest");
-                    });
+            // RabbitMQ configuration
+            // x.UsingRabbitMq((ctx, cfg) =>
+            // {
+            //     cfg.Host(
+            //         configuration["RabbitMq:Host"] ?? "rabbitmq",
+            //         h =>
+            //         {
+            //             h.Username(configuration["RabbitMq:Username"] ?? "guest");
+            //             h.Password(configuration["RabbitMq:Password"] ?? "guest");
+            //         });
+            //     cfg.ConfigureEndpoints(ctx);
+            // });
 
+            // Azure Service Bus configuration
+            x.UsingAzureServiceBus((ctx, cfg) =>
+            {
+                cfg.Host(configuration["ServiceBus__ConnectionString"]);
                 cfg.ConfigureEndpoints(ctx);
             });
         });
