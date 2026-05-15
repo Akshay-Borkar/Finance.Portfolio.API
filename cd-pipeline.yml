@@ -1,0 +1,74 @@
+trigger: none
+
+variables:
+  - group: KeyVaultSecrets
+  - name: GHCR
+    value: ghcr.io/akshay-borkar
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+
+- stage: Docker
+  displayName: CD — Build and Push Docker Images
+  jobs:
+  - job: PushImages
+    displayName: Build and push all 7 images to GHCR
+    steps:
+    - script: echo $(GhcrPat) | docker login ghcr.io -u akshay-borkar --password-stdin
+      displayName: Login to GHCR
+
+    - script: |
+        declare -A SERVICES
+        SERVICES[identity]="services/Identity/Finance.IdentityService.API/Dockerfile"
+        SERVICES[portfolio]="services/Portfolio/Finance.PortfolioService.API/Dockerfile"
+        SERVICES[marketdata]="services/MarketData/Finance.MarketDataService.API/Dockerfile"
+        SERVICES[alert]="services/Alert/Finance.AlertService.API/Dockerfile"
+        SERVICES[sentiment]="services/Sentiment/Finance.SentimentService.API/Dockerfile"
+        SERVICES[notification]="services/Notification/Finance.NotificationService.API/Dockerfile"
+        SERVICES[gateway]="services/Gateway/Finance.Gateway/Dockerfile"
+        for svc in "${!SERVICES[@]}"; do
+          docker build -f "${SERVICES[$svc]}" \
+            -t $(GHCR)/finance-$svc:$(Build.BuildId) \
+            -t $(GHCR)/finance-$svc:latest .
+          docker push $(GHCR)/finance-$svc:$(Build.BuildId)
+          docker push $(GHCR)/finance-$svc:latest
+          echo "Built and pushed finance-$svc"
+        done
+      displayName: Build and push all 7 images
+
+- stage: Deploy
+  displayName: CD — Deploy to Azure Container Apps
+  dependsOn: Docker
+  jobs:
+  - deployment: DeployAll
+    displayName: Deploy all 7 services
+    environment: Production
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureCLI@2
+            displayName: Deploy all Container Apps
+            inputs:
+              azureSubscription: AzureSubscription
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                for svc in identity portfolio marketdata alert sentiment notification gateway; do
+                  az containerapp update \
+                    --name ca-$svc \
+                    --resource-group rg-finance-portfolio \
+                    --image ghcr.io/akshay-borkar/finance-$svc:$(Build.BuildId)
+                  echo "Deployed ca-$svc successfully"
+                done
+
+          - task: Bash@3
+            displayName: Smoke test gateway health
+            inputs:
+              targetType: inline
+              script: |
+                sleep 30
+                curl -f https://ca-gateway.agreeablewater-95aca64f.centralus.azurecontainerapps.io/health || exit 1
+                echo "Gateway health check passed"
