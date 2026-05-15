@@ -37,7 +37,7 @@ if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("all", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000")
+        policy.WithOrigins("http://localhost:4200", "http://localhost:3000", "https://stfinanceportfolio.z19.web.core.windows.net")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials());

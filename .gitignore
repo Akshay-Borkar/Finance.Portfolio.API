@@ -50,9 +50,10 @@ node_modules/
 # Secrets — never commit
 .env
 !.env.example
-
+*.lscache
 # Claude Code
 .claude/
 
 # Local planning docs — kept locally, not tracked
 MICROSERVICES_PLAN.md
+
