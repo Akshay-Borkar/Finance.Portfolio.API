@@ -1,8 +1,11 @@
+using Finance.PortfolioService.API.Models;
 using Finance.PortfolioService.Application.Common;
+using Finance.PortfolioService.Application.Contracts.AI;
 using Finance.PortfolioService.Application.Contracts.MarketData;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.AddInvestment;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.AddStock;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.DeleteStock;
+using Finance.PortfolioService.Application.Features.Portfolio.Queries.ChatWithPortfolio;
 using Finance.PortfolioService.Application.Features.Portfolio.Queries.GetInvestmentsByStockId;
 using Finance.PortfolioService.Application.Features.Portfolio.Queries.GetPortfolioSummary;
 using MediatR;
@@ -18,11 +21,13 @@ public class PortfolioController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IMarketDataGrpcClient _marketData;
+    private readonly IPortfolioChatService? _chatService;
 
-    public PortfolioController(IMediator mediator, IMarketDataGrpcClient marketData)
+    public PortfolioController(IMediator mediator, IMarketDataGrpcClient marketData, IPortfolioChatService? chatService = null)
     {
         _mediator = mediator;
         _marketData = marketData;
+        _chatService = chatService;
     }
 
     [HttpGet("summary")]
@@ -92,6 +97,40 @@ public class PortfolioController : ControllerBase
 
         var result = await _mediator.Send(new GetInvestmentsByStockIdQuery(stockId, userId, page, pageSize));
         return Ok(result);
+    }
+
+    [HttpPost("chat")]
+    [Authorize]
+    public async Task ChatWithPortfolio([FromBody] ChatRequest request, CancellationToken cancellationToken)
+    {
+        if (_chatService is null)
+        {
+            Response.StatusCode = 503;
+            await Response.WriteAsync("data: AI chat is not configured.\n\n", cancellationToken);
+            return;
+        }
+
+        Response.ContentType = "text/event-stream";
+        Response.Headers.CacheControl = "no-cache";
+        Response.Headers.Connection = "keep-alive";
+
+        var userId = GetUserId();
+        if (userId == Guid.Empty)
+        {
+            Response.StatusCode = 401;
+            return;
+        }
+
+        var stream = await _mediator.Send(new ChatWithPortfolioQuery(request.Message, userId), cancellationToken);
+
+        await foreach (var chunk in stream.WithCancellation(cancellationToken))
+        {
+            await Response.WriteAsync($"data: {chunk}\n\n", cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+        }
+
+        await Response.WriteAsync("data: [DONE]\n\n", cancellationToken);
+        await Response.Body.FlushAsync(cancellationToken);
     }
 
     private Guid GetUserId()

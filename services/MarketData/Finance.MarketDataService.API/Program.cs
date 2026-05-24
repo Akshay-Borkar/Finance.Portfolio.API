@@ -6,6 +6,8 @@ using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddUserSecrets<Program>();
+
 builder.Services.AddMarketDataInfrastructure(builder.Configuration);
 builder.Services.AddGrpc();
 builder.Services.AddControllers();

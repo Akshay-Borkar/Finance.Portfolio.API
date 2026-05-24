@@ -34,7 +34,12 @@ public static class InfrastructureServiceRegistration
             // Azure Service Bus configuration
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                cfg.Host(configuration["ServiceBusConnectionString"]);
+                var connectionString = configuration["ServiceBusConnectionString"];
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    throw new InvalidOperationException(
+                        "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
+
+                cfg.Host(connectionString);
                 cfg.ConfigureEndpoints(ctx);
             });
         });
