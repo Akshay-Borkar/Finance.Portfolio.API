@@ -4,6 +4,11 @@ using Finance.SharedKernel.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+});
+
 builder.Services.AddSentimentInfrastructure();
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();

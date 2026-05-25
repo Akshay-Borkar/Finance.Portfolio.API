@@ -6,6 +6,11 @@ using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+});
+
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddMarketDataInfrastructure(builder.Configuration);
