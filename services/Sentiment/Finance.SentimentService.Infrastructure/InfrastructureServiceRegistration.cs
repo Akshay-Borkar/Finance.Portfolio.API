@@ -7,7 +7,7 @@ public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddSentimentInfrastructure(this IServiceCollection services)
     {
-        services.AddHttpClient<IYahooFinanceService, YahooFinanceService>();
+        services.AddHttpClient<IMarketAuxService, MarketAuxService>();
         services.AddSingleton<ISentimentAnalysisService, SentimentAnalysisService>();
 
         return services;

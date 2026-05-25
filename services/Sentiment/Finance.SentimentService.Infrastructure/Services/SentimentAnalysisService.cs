@@ -1,16 +1,64 @@
+using Finance.SentimentService.Infrastructure.MLModel;
+using Microsoft.Extensions.Logging;
+using Microsoft.ML;
+
 namespace Finance.SentimentService.Infrastructure.Services;
 
-// ML.NET pipeline is stubbed — model training data (sentimentdata.csv) is not yet
-// available. Replace the PredictSentiment body with the commented block below once
-// the model file is added to the project.
 public class SentimentAnalysisService : ISentimentAnalysisService
 {
+    private readonly PredictionEngine<SentimentData, SentimentPrediction> _predictionEngine;
+    private readonly ILogger<SentimentAnalysisService> _logger;
+
+    private static readonly string ModelPath = Path.Combine(
+        AppContext.BaseDirectory, "MLModel", "sentiment_model.zip");
+
+    private static readonly string DataPath = Path.Combine(
+        AppContext.BaseDirectory, "MLModel", "sentiment_data.csv");
+
+    public SentimentAnalysisService(ILogger<SentimentAnalysisService> logger)
+    {
+        _logger = logger;
+        var mlContext = new MLContext(seed: 42);
+
+        if (!File.Exists(ModelPath))
+        {
+            _logger.LogInformation(
+                "Sentiment model not found at {Path}. Training now...", ModelPath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(ModelPath)!);
+            SentimentModelTrainer.TrainAndSave(DataPath, ModelPath);
+
+            _logger.LogInformation("Sentiment model trained and saved successfully.");
+        }
+
+        var loadedModel = mlContext.Model.Load(ModelPath, out _);
+
+        _predictionEngine = mlContext.Model.CreatePredictionEngine<SentimentData, SentimentPrediction>(loadedModel);
+
+        _logger.LogInformation("Sentiment model loaded successfully from {Path}", ModelPath);
+    }
+
     public string PredictSentiment(string text)
     {
-        // TODO: restore when ML model is ready
-        // var input = new SentimentData { NewsText = text };
-        // var prediction = _predictionEngine.Predict(input);
-        // return _sentimentLabels[prediction.Prediction] ?? "Unknown";
-        return "Unknown";
+        if (string.IsNullOrWhiteSpace(text))
+            return "Neutral";
+
+        try
+        {
+            var input = new SentimentData { Text = text };
+            var prediction = _predictionEngine.Predict(input);
+
+            if (prediction.Probability >= 0.6f)
+                return "Positive";
+            if (prediction.Probability <= 0.4f)
+                return "Negative";
+
+            return "Neutral";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error predicting sentiment for text: {Text}", text);
+            return "Neutral";
+        }
     }
 }

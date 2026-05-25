@@ -14,4 +14,6 @@ RUN dotnet publish Finance.SentimentService.API.csproj -c Release -o /app/publis
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+RUN mkdir -p /app/MLModel
+COPY --from=build /src/services/Sentiment/Finance.SentimentService.Infrastructure/MLModel/sentiment_data.csv /app/MLModel/
 ENTRYPOINT ["dotnet", "Finance.SentimentService.API.dll"]

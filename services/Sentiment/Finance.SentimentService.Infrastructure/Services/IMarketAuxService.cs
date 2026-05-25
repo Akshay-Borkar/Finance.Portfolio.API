@@ -1,6 +1,6 @@
 namespace Finance.SentimentService.Infrastructure.Services;
 
-public interface IYahooFinanceService
+public interface IMarketAuxService
 {
     Task<List<string>> FetchLatestStockNews(string ticker);
 }

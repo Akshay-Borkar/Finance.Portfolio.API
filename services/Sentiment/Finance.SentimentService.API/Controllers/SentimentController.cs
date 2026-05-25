@@ -10,20 +10,20 @@ namespace Finance.SentimentService.API.Controllers;
 public class SentimentController : ControllerBase
 {
     private readonly ISentimentAnalysisService _sentimentService;
-    private readonly IYahooFinanceService _yahooFinanceService;
+    private readonly IMarketAuxService _marketAuxService;
 
     public SentimentController(
         ISentimentAnalysisService sentimentService,
-        IYahooFinanceService yahooFinanceService)
+        IMarketAuxService marketAuxService)
     {
         _sentimentService = sentimentService;
-        _yahooFinanceService = yahooFinanceService;
+        _marketAuxService = marketAuxService;
     }
 
-    [HttpGet("analyze-yahoo-news/{ticker}")]
-    public async Task<IActionResult> AnalyzeYahooFinanceNews(string ticker)
+    [HttpGet("analyze/{ticker}")]
+    public async Task<IActionResult> AnalyzeStockNews(string ticker)
     {
-        var articles = await _yahooFinanceService.FetchLatestStockNews(ticker);
+        var articles = await _marketAuxService.FetchLatestStockNews(ticker);
 
         var results = articles.Select(article => new
         {
