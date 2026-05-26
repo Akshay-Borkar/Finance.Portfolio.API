@@ -64,6 +64,7 @@ public static class InfrastructureServiceRegistration
 
             services.AddSingleton(kernel);
             services.AddScoped<IPortfolioChatService, PortfolioChatService>();
+            services.AddScoped<IRebalancingAgentService, RebalancingAgentService>();
         }
 
         return services;

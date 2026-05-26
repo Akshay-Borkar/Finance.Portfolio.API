@@ -22,12 +22,18 @@ public class PortfolioController : ControllerBase
     private readonly IMediator _mediator;
     private readonly IMarketDataGrpcClient _marketData;
     private readonly IPortfolioChatService? _chatService;
+    private readonly IRebalancingAgentService? _rebalancingAgent;
 
-    public PortfolioController(IMediator mediator, IMarketDataGrpcClient marketData, IPortfolioChatService? chatService = null)
+    public PortfolioController(
+        IMediator mediator,
+        IMarketDataGrpcClient marketData,
+        IPortfolioChatService? chatService = null,
+        IRebalancingAgentService? rebalancingAgent = null)
     {
         _mediator = mediator;
         _marketData = marketData;
         _chatService = chatService;
+        _rebalancingAgent = rebalancingAgent;
     }
 
     [HttpGet("summary")]
@@ -131,6 +137,53 @@ public class PortfolioController : ControllerBase
 
         await Response.WriteAsync("data: [DONE]\n\n", cancellationToken);
         await Response.Body.FlushAsync(cancellationToken);
+    }
+
+    [HttpPost("ai/rebalancing/chat")]
+    [Authorize]
+    public async Task RebalancingChat([FromBody] RebalancingChatRequest request, CancellationToken cancellationToken)
+    {
+        if (_rebalancingAgent is null)
+        {
+            Response.StatusCode = 503;
+            await Response.WriteAsync("data: Rebalancing agent is not configured.\n\n", cancellationToken);
+            return;
+        }
+
+        var userId = GetUserId();
+        if (userId == Guid.Empty)
+        {
+            Response.StatusCode = 401;
+            return;
+        }
+
+        var sessionId = string.IsNullOrWhiteSpace(request.SessionId)
+            ? $"{userId}:rebalancing:{Guid.NewGuid()}"
+            : request.SessionId;
+
+        Response.ContentType = "text/event-stream";
+        Response.Headers.CacheControl = "no-cache";
+        Response.Headers["X-Accel-Buffering"] = "no";
+
+        await foreach (var chunk in _rebalancingAgent.ChatAsync(request.Message, userId, sessionId, cancellationToken))
+        {
+            await Response.WriteAsync($"data: {chunk}\n\n", cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+        }
+
+        await Response.WriteAsync("data: [DONE]\n\n", cancellationToken);
+        await Response.Body.FlushAsync(cancellationToken);
+    }
+
+    [HttpDelete("ai/rebalancing/session/{sessionId}")]
+    [Authorize]
+    public async Task<ActionResult> ClearRebalancingSession(string sessionId)
+    {
+        if (_rebalancingAgent is null)
+            return StatusCode(503);
+
+        await _rebalancingAgent.ClearSessionAsync(sessionId);
+        return Ok();
     }
 
     private Guid GetUserId()

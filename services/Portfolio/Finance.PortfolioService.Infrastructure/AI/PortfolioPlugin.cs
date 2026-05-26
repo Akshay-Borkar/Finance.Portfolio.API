@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text;
+using System.Text.Json;
 using Finance.PortfolioService.Application.Features.Portfolio.Queries.GetPortfolioSummary;
 using MediatR;
 using Microsoft.SemanticKernel;
@@ -47,6 +48,102 @@ public class PortfolioPlugin
         }
 
         return sb.ToString();
+    }
+
+    [KernelFunction("get_sector_allocation")]
+    [Description("Returns the current sector-wise allocation of the portfolio including sector name, percentage of total portfolio, and amount invested per sector.")]
+    public async Task<string> GetSectorAllocationAsync()
+    {
+        var summary = await _mediator.Send(new GetPortfolioSummaryQuery(_userId));
+
+        var sb = new StringBuilder();
+        sb.AppendLine("=== SECTOR ALLOCATION ===");
+        foreach (var s in summary.SectorAllocations)
+        {
+            sb.AppendLine($"{s.SectorName}: {s.AllocationPercent:N2}% | ₹{s.InvestedAmount:N2}");
+        }
+
+        return sb.ToString();
+    }
+
+    [KernelFunction("calculate_rebalance_plan")]
+    [Description("Calculates a dry-run rebalancing plan to reach a target sector allocation. The targetAllocationJson parameter should be a JSON object like {\"IT\":30,\"Banking\":25} where values are target percentages that must sum to 100.")]
+    public async Task<string> CalculateRebalancePlanAsync(
+        [Description("Target sector allocation as JSON, e.g. {\"IT\":30,\"Banking\":25}. Values are percentages and must sum to 100.")] string targetAllocationJson)
+    {
+        Dictionary<string, double> targets;
+        try
+        {
+            targets = JsonSerializer.Deserialize<Dictionary<string, double>>(targetAllocationJson,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
+                ?? throw new InvalidOperationException("Empty JSON");
+        }
+        catch
+        {
+            return "ERROR: Could not parse targetAllocationJson. Expected format: {\"IT\":30,\"Banking\":25}";
+        }
+
+        var total = targets.Values.Sum();
+        if (Math.Abs(total - 100.0) > 0.01)
+            return $"ERROR: Target allocations must sum to 100%. Provided sum: {total:N2}%";
+
+        var summary = await _mediator.Send(new GetPortfolioSummaryQuery(_userId));
+        var portfolioValue = summary.TotalInvested;
+
+        var currentBySector = summary.SectorAllocations
+            .ToDictionary(s => s.SectorName, s => s.InvestedAmount, StringComparer.OrdinalIgnoreCase);
+
+        var sb = new StringBuilder();
+        sb.AppendLine("=== REBALANCING PLAN (DRY RUN) ===");
+        sb.AppendLine($"Total Portfolio Value: ₹{portfolioValue:N2}");
+        sb.AppendLine();
+
+        var largeTradeThreshold = portfolioValue * 0.05;
+
+        foreach (var (sector, targetPct) in targets)
+        {
+            var targetAmount = portfolioValue * (targetPct / 100.0);
+            currentBySector.TryGetValue(sector, out var currentAmount);
+            var diff = targetAmount - currentAmount;
+            var action = diff >= 0 ? "BUY" : "SELL";
+            var absDiff = Math.Abs(diff);
+            var warning = absDiff > largeTradeThreshold ? " ⚠️ LARGE TRADE" : string.Empty;
+
+            sb.AppendLine($"{sector}: {action} ₹{absDiff:N2} (Current: ₹{currentAmount:N2} → Target: ₹{targetAmount:N2} [{targetPct}%]){warning}");
+        }
+
+        // Flag sectors in portfolio that have no target (will be reduced to 0)
+        foreach (var (sector, invested) in currentBySector)
+        {
+            if (!targets.ContainsKey(sector) && invested > 0)
+            {
+                var warning = invested > largeTradeThreshold ? " ⚠️ LARGE TRADE" : string.Empty;
+                sb.AppendLine($"{sector}: SELL ₹{invested:N2} (not in target allocation){warning}");
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("NOTE: This is a DRY RUN. No trades have been executed.");
+        return sb.ToString();
+    }
+
+    [KernelFunction("check_market_hours")]
+    [Description("Checks whether the Indian stock market (NSE/BSE) is currently open. Market hours are Monday–Friday 9:15 AM to 3:30 PM IST.")]
+    public Task<string> CheckMarketHoursAsync()
+    {
+        var ist = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+        var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, ist);
+        var open = new TimeOnly(9, 15);
+        var close = new TimeOnly(15, 30);
+        var timeNow = TimeOnly.FromDateTime(now);
+
+        bool isWeekday = now.DayOfWeek is >= DayOfWeek.Monday and <= DayOfWeek.Friday;
+        bool isWithinHours = timeNow >= open && timeNow <= close;
+        bool isOpen = isWeekday && isWithinHours;
+
+        var status = isOpen ? "OPEN" : "CLOSED";
+        return Task.FromResult(
+            $"Market Status: {status}\nCurrent IST Time: {now:dddd, dd MMM yyyy HH:mm:ss}\nNSE/BSE Hours: Mon–Fri 9:15 AM – 3:30 PM IST");
     }
 
     [KernelFunction("get_holding_detail")]
