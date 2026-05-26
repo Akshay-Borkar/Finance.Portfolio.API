@@ -6,7 +6,11 @@ using Finance.PortfolioService.Infrastructure.GrpcClients;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+#pragma warning disable SKEXP0001 // ITextEmbeddingGenerationService is experimental
+#pragma warning disable SKEXP0010 // AddAzureOpenAITextEmbeddingGeneration is experimental
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Embeddings;
 
 namespace Finance.PortfolioService.Infrastructure;
 
@@ -51,6 +55,7 @@ public static class InfrastructureServiceRegistration
         });
 
         services.Configure<AzureOpenAISettings>(configuration.GetSection("AzureOpenAI"));
+        services.Configure<AzureSearchSettings>(configuration.GetSection("AzureSearch"));
 
         var aiSettings = configuration.GetSection("AzureOpenAI").Get<AzureOpenAISettings>();
         if (aiSettings?.IsConfigured == true)
@@ -60,12 +65,28 @@ public static class InfrastructureServiceRegistration
                     deploymentName: aiSettings.DeploymentName,
                     endpoint: aiSettings.Endpoint,
                     apiKey: aiSettings.ApiKey)
+                .AddAzureOpenAITextEmbeddingGeneration(
+                    deploymentName: aiSettings.EmbeddingDeploymentName,
+                    endpoint: aiSettings.Endpoint,
+                    apiKey: aiSettings.ApiKey)
                 .Build();
 
             services.AddSingleton(kernel);
+
+            // Expose SK services for direct injection into infrastructure classes
+            services.AddSingleton<ITextEmbeddingGenerationService>(sp =>
+                sp.GetRequiredService<Kernel>().GetRequiredService<ITextEmbeddingGenerationService>());
+            services.AddSingleton<IChatCompletionService>(sp =>
+                sp.GetRequiredService<Kernel>().GetRequiredService<IChatCompletionService>());
+
             services.AddScoped<IPortfolioChatService, PortfolioChatService>();
             services.AddScoped<IRebalancingAgentService, RebalancingAgentService>();
+            services.AddScoped<IDocumentIngestionService, DocumentIngestionService>();
+            services.AddSingleton<DocumentChunkingService>();
+            services.AddSingleton<DocumentSearchPlugin>();
         }
+
+        services.AddHostedService<SearchIndexInitializer>();
 
         return services;
     }
