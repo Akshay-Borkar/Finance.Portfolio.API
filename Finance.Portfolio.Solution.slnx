@@ -22,9 +22,14 @@
     <Project Path="services/MarketData/Finance.MarketDataService.Application/Finance.MarketDataService.Application.csproj" />
     <Project Path="services/MarketData/Finance.MarketDataService.Infrastructure/Finance.MarketDataService.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/services/Agent/">
+    <Project Path="services/Agent/Finance.AgentService.API/Finance.AgentService.API.csproj" />
+    <Project Path="services/Agent/Finance.AgentService.Infrastructure/Finance.AgentService.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/services/Notification/">
     <Project Path="services/Notification/Finance.NotificationService.API/Finance.NotificationService.API.csproj" />
     <Project Path="services/Notification/Finance.NotificationService.Infrastructure/Finance.NotificationService.Infrastructure.csproj" />
+    <Project Path="services/Notification/Finance.NotificationService.Persistence/Finance.NotificationService.Persistence.csproj" />
   </Folder>
   <Folder Name="/services/Portfolio/">
     <Project Path="services/Portfolio/Finance.PortfolioService.API/Finance.PortfolioService.API.csproj" />
