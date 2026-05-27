@@ -9,11 +9,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="10.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.NotificationService.Infrastructure\Finance.NotificationService.Infrastructure.csproj" />
+    <ProjectReference Include="..\Finance.NotificationService.Persistence\Finance.NotificationService.Persistence.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
   </ItemGroup>
 

@@ -1,5 +1,8 @@
-using Finance.NotificationService.Infrastructure.Hubs;
 using Finance.NotificationService.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Finance.NotificationService.Infrastructure.Hubs;
+using Finance.NotificationService.Persistence;
+using Finance.NotificationService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +14,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 
 builder.Configuration.AddUserSecrets<Program>();
 
+builder.Services.AddNotificationPersistence(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
@@ -56,6 +60,14 @@ app.UseCors("all");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Auto-migrate NotificationDB on startup.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<NotificationDbContext>();
+    db.Database.Migrate();
+}
+
 app.MapHub<StockPriceHub>("/hubs/stockprice");
+app.MapHub<PortfolioReviewHub>("/hubs/portfolio-review");
 
 app.Run();

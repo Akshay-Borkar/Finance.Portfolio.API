@@ -17,6 +17,7 @@ public static class InfrastructureServiceRegistration
         {
             x.AddConsumer<StockPriceUpdatedConsumer>();
             x.AddConsumer<AlertTriggeredConsumer>();
+            x.AddConsumer<PortfolioReviewCompletedConsumer>();
 
             // RabbitMQ configuration
             // x.UsingRabbitMq((ctx, cfg) =>
@@ -40,7 +41,26 @@ public static class InfrastructureServiceRegistration
                         "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
 
                 cfg.Host(connectionString);
-                cfg.ConfigureEndpoints(ctx);
+
+                // All three consumers are wired with SubscriptionEndpoint so MassTransit creates
+                // predictable topic/subscription pairs on Azure Service Bus without relying on
+                // ConfigureEndpoints convention-based naming (which would suffix "-consumer").
+                //
+                // Topic derived from message type (kebab-case simple name):
+                //   StockPriceUpdated      → topic: stock-price-updated
+                //   AlertTriggered         → topic: alert-triggered
+                //   PortfolioReviewCompleted → topic: portfolio-review-completed
+                cfg.SubscriptionEndpoint<Finance.Contracts.Events.StockPriceUpdated>(
+                    "finance-notificationservice",
+                    e => e.ConfigureConsumer<StockPriceUpdatedConsumer>(ctx));
+
+                cfg.SubscriptionEndpoint<Finance.Contracts.Events.AlertTriggered>(
+                    "finance-notificationservice",
+                    e => e.ConfigureConsumer<AlertTriggeredConsumer>(ctx));
+
+                cfg.SubscriptionEndpoint<Finance.Contracts.Events.PortfolioReviewCompleted>(
+                    "finance-notificationservice",
+                    e => e.ConfigureConsumer<PortfolioReviewCompletedConsumer>(ctx));
             });
         });
 
