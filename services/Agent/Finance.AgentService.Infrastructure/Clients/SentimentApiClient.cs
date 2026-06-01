@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Finance.AgentService.Infrastructure.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -16,7 +17,7 @@ public class SentimentApiClient : ISentimentApiClient
         _http = http;
         _logger = logger;
 
-        var baseUrl = configuration["SentimentService:BaseUrl"]
+        var baseUrl = configuration[AgentConstants.Config.SentimentServiceBaseUrl]
             ?? throw new InvalidOperationException("SentimentService:BaseUrl is not configured.");
         _http.BaseAddress = new Uri(baseUrl);
     }

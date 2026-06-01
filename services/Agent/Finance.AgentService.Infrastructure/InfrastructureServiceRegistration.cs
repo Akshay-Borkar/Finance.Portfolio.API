@@ -1,9 +1,9 @@
-#pragma warning disable SKEXP0110
-#pragma warning disable SKEXP0001
 using Finance.AgentService.Infrastructure.Clients;
+using Finance.AgentService.Infrastructure.Constants;
 using Finance.AgentService.Infrastructure.Consumers;
 using Finance.AgentService.Infrastructure.Orchestration;
 using Finance.AgentService.Infrastructure.Settings;
+using Finance.Contracts.Events;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,11 +20,11 @@ public static class InfrastructureServiceRegistration
         services.AddHttpClient<IMarketAuxClient, MarketAuxClient>();
         services.AddHttpClient<ISentimentApiClient, SentimentApiClient>();
 
-        services.Configure<AzureAISettings>(configuration.GetSection("AzureOpenAI"));
+        services.Configure<AzureAISettings>(configuration.GetSection(AgentConstants.Config.AzureOpenAISection));
 
         services.AddSingleton<IAgentCache>(sp =>
         {
-            var aiSettings = configuration.GetSection("AzureOpenAI").Get<AzureAISettings>()
+            var aiSettings = configuration.GetSection(AgentConstants.Config.AzureOpenAISection).Get<AzureAISettings>()
                 ?? throw new InvalidOperationException("AzureOpenAI configuration section is missing.");
 
             if (!aiSettings.IsConfigured)
@@ -57,7 +57,7 @@ public static class InfrastructureServiceRegistration
 
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                var connectionString = configuration["ServiceBusConnectionString"];
+                var connectionString = configuration[AgentConstants.ServiceBus.ServiceBusConnectionString];
                 if (string.IsNullOrWhiteSpace(connectionString))
                     throw new InvalidOperationException(
                         "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
@@ -69,8 +69,8 @@ public static class InfrastructureServiceRegistration
                 // → "portfolio-review-requested"). The subscription name must be set explicitly; otherwise MassTransit
                 // defaults to the consumer class name in kebab-case, which would be
                 // "portfolio-review-requested-consumer" — not what Azure Service Bus expects.
-                cfg.SubscriptionEndpoint<Finance.Contracts.Events.PortfolioReviewRequested>(
-                    "finance-agentservice",
+                cfg.SubscriptionEndpoint<PortfolioReviewRequested>(
+                    AgentConstants.ServiceBus.SubscriptionName,
                     e => e.ConfigureConsumer<PortfolioReviewRequestedConsumer>(ctx));
             });
         });

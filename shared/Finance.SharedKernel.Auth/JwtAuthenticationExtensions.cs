@@ -12,7 +12,7 @@ public static class JwtAuthenticationExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var key = configuration["JwtSettings:Key"]
+        var key = configuration[AuthConstants.Config.JwtKey]
             ?? throw new InvalidOperationException("JwtSettings:Key is not configured.");
 
         services
@@ -28,9 +28,9 @@ public static class JwtAuthenticationExtensions
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
                     ValidateIssuer = true,
-                    ValidIssuer = configuration["JwtSettings:Issuer"],
+                    ValidIssuer = configuration[AuthConstants.Config.JwtIssuer],
                     ValidateAudience = true,
-                    ValidAudience = configuration["JwtSettings:Audience"],
+                    ValidAudience = configuration[AuthConstants.Config.JwtAudience],
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
@@ -40,9 +40,9 @@ public static class JwtAuthenticationExtensions
                 {
                     OnMessageReceived = ctx =>
                     {
-                        var accessToken = ctx.Request.Query["access_token"];
+                        var accessToken = ctx.Request.Query[AuthConstants.SignalR.AccessTokenQueryParam];
                         var path = ctx.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments(AuthConstants.SignalR.HubPathPrefix))
                             ctx.Token = accessToken;
                         return Task.CompletedTask;
                     }

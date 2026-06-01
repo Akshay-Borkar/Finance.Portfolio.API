@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 
 builder.Configuration.AddUserSecrets<Program>();
@@ -16,11 +16,8 @@ builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("all", policy =>
-        policy.WithOrigins(
-                "http://localhost:4200",
-                "http://localhost:3000",
-                "https://stfinanceportfolio.z19.web.core.windows.net")
+    options.AddPolicy(AuthConstants.Cors.PolicyName, policy =>
+        policy.WithOrigins(AuthConstants.Cors.AllowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials());
@@ -28,7 +25,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("all");
+app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

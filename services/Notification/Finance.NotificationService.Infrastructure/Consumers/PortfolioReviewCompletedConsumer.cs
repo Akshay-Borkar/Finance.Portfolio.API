@@ -1,4 +1,5 @@
 using Finance.Contracts.Events;
+using Finance.NotificationService.Infrastructure.Constants;
 using Finance.NotificationService.Infrastructure.Hubs;
 using Finance.NotificationService.Persistence.DatabaseContext;
 using Finance.NotificationService.Persistence.Entities;
@@ -64,11 +65,11 @@ public class PortfolioReviewCompletedConsumer : IConsumer<PortfolioReviewComplet
         };
 
         var group = $"portfolio-review-{msg.UserId}";
-        _logger.LogInformation("Pushing SignalR event ReceivePortfolioReview to group {Group}", group);
+        _logger.LogInformation("Pushing SignalR event {Method} to group {Group}", NotificationConstants.SignalRMethods.ReceivePortfolioReview, group);
 
         await _hub.Clients
             .Group(group)
-            .SendAsync("ReceivePortfolioReview", notification, ct);
+            .SendAsync(NotificationConstants.SignalRMethods.ReceivePortfolioReview, notification, ct);
 
         _logger.LogInformation(
             "Portfolio review {ReviewId} stored and pushed to group {Group}",

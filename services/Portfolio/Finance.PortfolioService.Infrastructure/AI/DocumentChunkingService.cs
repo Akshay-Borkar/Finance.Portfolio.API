@@ -1,11 +1,12 @@
+using Finance.PortfolioService.Infrastructure.Constants;
 using UglyToad.PdfPig;
 
 namespace Finance.PortfolioService.Infrastructure.AI;
 
 public class DocumentChunkingService
 {
-    private const int TargetWords = 500;
-    private const int OverlapWords = 50;
+    private const int TargetWords = PortfolioInfrastructureConstants.AI.ChunkTargetWords;
+    private const int OverlapWords = PortfolioInfrastructureConstants.AI.ChunkOverlapWords;
 
     public List<DocumentChunk> ChunkPdf(Stream pdfStream, string fileName)
     {

@@ -1,11 +1,12 @@
 using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using Finance.PortfolioService.API.Constants;
 using Finance.PortfolioService.Application.Contracts.AI;
+using Finance.PortfolioService.Infrastructure.AI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Finance.PortfolioService.Infrastructure.AI;
 
 namespace Finance.PortfolioService.API.Controllers;
 
@@ -20,12 +21,10 @@ public class DocumentsController(
 {
     private readonly AzureSearchSettings _searchSettings = searchSettings.Value;
 
-    private const long MaxFileSizeBytes = 20 * 1024 * 1024;
-
     [HttpPost("ingest")]
     [Consumes("multipart/form-data")]
-    [RequestSizeLimit(20 * 1024 * 1024)]
-    [RequestFormLimits(MultipartBodyLengthLimit = 20 * 1024 * 1024)]
+    [RequestSizeLimit(PortfolioConstants.Documents.MaxFileSizeBytes)]
+    [RequestFormLimits(MultipartBodyLengthLimit = PortfolioConstants.Documents.MaxFileSizeBytes)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -37,11 +36,11 @@ public class DocumentsController(
         if (file is null || file.Length == 0)
             return BadRequest("No file provided.");
 
-        if (!file.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+        if (!file.FileName.EndsWith(PortfolioConstants.Documents.AllowedExtension, StringComparison.OrdinalIgnoreCase))
             return BadRequest("Only PDF files are accepted.");
 
-        if (file.Length > MaxFileSizeBytes)
-            return BadRequest("File exceeds the 20 MB limit.");
+        if (file.Length > PortfolioConstants.Documents.MaxFileSizeBytes)
+            return BadRequest($"File exceeds the {PortfolioConstants.Documents.MaxFileSizeBytes / (1024 * 1024)} MB limit.");
 
         var fileName = Path.GetFileName(file.FileName);
 

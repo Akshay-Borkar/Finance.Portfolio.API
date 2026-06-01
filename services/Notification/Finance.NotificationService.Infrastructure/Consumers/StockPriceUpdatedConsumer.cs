@@ -1,4 +1,5 @@
 using Finance.Contracts.Events;
+using Finance.NotificationService.Infrastructure.Constants;
 using Finance.NotificationService.Infrastructure.Hubs;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
@@ -21,7 +22,7 @@ public class StockPriceUpdatedConsumer : IConsumer<StockPriceUpdated>
     {
         var msg = context.Message;
         await _hub.Clients.Group(msg.Ticker)
-            .SendAsync("ReceiveStockPrice", msg.Ticker, msg.Price, msg.UnixTimestamp, context.CancellationToken);
+            .SendAsync(NotificationConstants.SignalRMethods.ReceiveStockPrice, msg.Ticker, msg.Price, msg.UnixTimestamp, context.CancellationToken);
 
         _logger.LogInformation("Broadcast price update: {Ticker} = {Price}", msg.Ticker, msg.Price);
     }

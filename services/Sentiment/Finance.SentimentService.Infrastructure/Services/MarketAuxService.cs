@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Finance.SentimentService.Infrastructure.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,7 @@ public class MarketAuxService : IMarketAuxService
     private readonly ILogger<MarketAuxService> _logger;
     private readonly string _apiToken;
 
-    private const string BaseUrl = "https://api.marketaux.com/v1/news/all";
+    private const string BaseUrl = SentimentConstants.Config.MarketAuxBaseUrl;
 
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -24,7 +25,7 @@ public class MarketAuxService : IMarketAuxService
     {
         _httpClient = httpClient;
         _logger = logger;
-        _apiToken = configuration["MarketAux:ApiToken"]
+        _apiToken = configuration[SentimentConstants.Config.MarketAuxApiToken]
             ?? throw new InvalidOperationException(
                 "MarketAux:ApiToken is not configured. Add it to user secrets or environment variables.");
     }

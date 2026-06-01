@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Finance.AgentService.Infrastructure.Constants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -10,14 +11,14 @@ public class MarketAuxClient : IMarketAuxClient
     private readonly string _apiToken;
     private readonly ILogger<MarketAuxClient> _logger;
 
-    private const string BaseUrl = "https://api.marketaux.com/v1/news/all";
+    private const string BaseUrl = AgentConstants.Config.MarketAuxBaseUrl;
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public MarketAuxClient(HttpClient http, IConfiguration configuration, ILogger<MarketAuxClient> logger)
     {
         _http = http;
         _logger = logger;
-        _apiToken = configuration["MarketAux:ApiToken"]
+        _apiToken = configuration[AgentConstants.Config.MarketAuxApiToken]
             ?? throw new InvalidOperationException("MarketAux:ApiToken is not configured.");
     }
 

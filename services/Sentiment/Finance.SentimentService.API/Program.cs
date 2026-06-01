@@ -1,12 +1,13 @@
 using Finance.SentimentService.API.Middleware;
 using Finance.SentimentService.Infrastructure;
+using Finance.SentimentService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 
 builder.Services.AddSentimentInfrastructure();
@@ -17,8 +18,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000")
+    options.AddPolicy(AuthConstants.Cors.PolicyName, policy =>
+        policy.WithOrigins(AuthConstants.Cors.AllowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
@@ -27,11 +28,11 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.MapOpenApi();
-app.UseCors("CorsPolicy");
+app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { service = "sentiment", status = "healthy" }));
+app.MapGet("/health", () => Results.Ok(new { service = SentimentConstants.ServiceName, status = "healthy" }));
 
 app.Run();

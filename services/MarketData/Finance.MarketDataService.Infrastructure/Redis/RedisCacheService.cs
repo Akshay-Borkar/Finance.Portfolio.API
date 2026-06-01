@@ -1,4 +1,5 @@
 using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Constants;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -7,7 +8,7 @@ namespace Finance.MarketDataService.Infrastructure.Redis;
 public class RedisCacheService : IRedisCacheService
 {
     private readonly IDatabase _db;
-    private const string ActiveTickersKey = "mkt:subscriptions:active-tickers";
+    private static string ActiveTickersKey => MarketDataConstants.Redis.ActiveTickersKey;
 
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {

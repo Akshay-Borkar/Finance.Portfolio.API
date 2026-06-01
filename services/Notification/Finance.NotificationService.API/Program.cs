@@ -1,15 +1,16 @@
 using Finance.NotificationService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using Finance.NotificationService.Infrastructure.Constants;
 using Finance.NotificationService.Infrastructure.Hubs;
 using Finance.NotificationService.Persistence;
 using Finance.NotificationService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 
 builder.Configuration.AddUserSecrets<Program>();
@@ -20,8 +21,8 @@ builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
 var signalR = builder.Services.AddSignalR();
 
-var redisEndpoint = builder.Configuration["RedisEndpoint"];
-var redisPassword = builder.Configuration["RedisPassword"];
+var redisEndpoint = builder.Configuration[NotificationConstants.Config.RedisEndpoint];
+var redisPassword = builder.Configuration[NotificationConstants.Config.RedisPassword];
 
 if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
 {
@@ -34,8 +35,8 @@ if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword)
                 AbortOnConnectFail = false,
                 Ssl = true,
                 Password = redisPassword,
-                ConnectTimeout = 5000,
-                SyncTimeout = 5000
+                ConnectTimeout = NotificationConstants.Config.RedisConnectTimeoutMs,
+                SyncTimeout = NotificationConstants.Config.RedisSyncTimeoutMs
             };
             config.EndPoints.Add(redisEndpoint);
             var connection = await StackExchange.Redis
@@ -47,8 +48,8 @@ if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword)
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("all", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000", "https://stfinanceportfolio.z19.web.core.windows.net")
+    options.AddPolicy(AuthConstants.Cors.PolicyName, policy =>
+        policy.WithOrigins(AuthConstants.Cors.AllowedOrigins)
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials());
@@ -56,7 +57,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("all");
+app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -67,7 +68,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.MapHub<StockPriceHub>("/hubs/stockprice");
-app.MapHub<PortfolioReviewHub>("/hubs/portfolio-review");
+app.MapHub<StockPriceHub>(NotificationConstants.Hubs.StockPriceRoute);
+app.MapHub<PortfolioReviewHub>(NotificationConstants.Hubs.PortfolioReviewRoute);
 
 app.Run();

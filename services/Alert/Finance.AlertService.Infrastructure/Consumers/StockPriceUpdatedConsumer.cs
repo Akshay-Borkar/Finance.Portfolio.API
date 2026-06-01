@@ -1,5 +1,6 @@
 using Finance.AlertService.Application.Contracts.Persistence;
 using Finance.AlertService.Domain.Entities;
+using Finance.AlertService.Infrastructure.Constants;
 using Finance.Contracts.Events;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,7 @@ public class StockPriceUpdatedConsumer : IConsumer<StockPriceUpdated>
             alert.IsTriggered = true;
             await _alertRepository.UpdateAsync(alert);
 
-            var direction = alert.Condition == AlertCondition.Above ? "above" : "below";
+            var direction = alert.Condition == AlertCondition.Above ? AlertConstants.Direction.Above : AlertConstants.Direction.Below;
 
             await _publisher.Publish(new AlertTriggered(
                 alert.Id,

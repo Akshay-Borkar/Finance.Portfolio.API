@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 builder.Services.AddApplicationInsightsTelemetryWorkerService();
 

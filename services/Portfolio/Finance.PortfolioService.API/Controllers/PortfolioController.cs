@@ -1,4 +1,6 @@
+using Finance.PortfolioService.API.Constants;
 using Finance.PortfolioService.API.Models;
+using Finance.SharedKernel.Auth;
 using Finance.PortfolioService.Application.Common;
 using Finance.PortfolioService.Application.Contracts.AI;
 using Finance.PortfolioService.Application.Contracts.MarketData;
@@ -85,8 +87,8 @@ public class PortfolioController : ControllerBase
     [HttpGet("chart/{ticker}")]
     public async Task<ActionResult<List<OhlcvBarDto>>> GetChart(
         string ticker,
-        [FromQuery] string interval = "5m",
-        [FromQuery] string range = "1d")
+        [FromQuery] string interval = PortfolioConstants.Chart.DefaultInterval,
+        [FromQuery] string range = PortfolioConstants.Chart.DefaultRange)
     {
         var bars = await _marketData.GetOhlcvAsync(ticker, interval, range);
         return Ok(bars);
@@ -95,8 +97,8 @@ public class PortfolioController : ControllerBase
     [HttpGet("investments/{stockId:guid}")]
     public async Task<ActionResult<PagedResult<InvestmentHistoryDto>>> GetInvestments(
         Guid stockId,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int page = AuthConstants.Pagination.DefaultPage,
+        [FromQuery] int pageSize = AuthConstants.Pagination.DefaultPageSize)
     {
         var userId = GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
@@ -112,13 +114,13 @@ public class PortfolioController : ControllerBase
         if (_chatService is null)
         {
             Response.StatusCode = 503;
-            await Response.WriteAsync("data: AI chat is not configured.\n\n", cancellationToken);
+            await Response.WriteAsync(PortfolioConstants.Sse.ChatNotConfigured, cancellationToken);
             return;
         }
 
-        Response.ContentType = "text/event-stream";
-        Response.Headers.CacheControl = "no-cache";
-        Response.Headers.Connection = "keep-alive";
+        Response.ContentType = PortfolioConstants.Sse.ContentType;
+        Response.Headers.CacheControl = PortfolioConstants.Sse.CacheControlValue;
+        Response.Headers.Connection = PortfolioConstants.Sse.ConnectionValue;
 
         var userId = GetUserId();
         if (userId == Guid.Empty)
@@ -135,7 +137,7 @@ public class PortfolioController : ControllerBase
             await Response.Body.FlushAsync(cancellationToken);
         }
 
-        await Response.WriteAsync("data: [DONE]\n\n", cancellationToken);
+        await Response.WriteAsync(PortfolioConstants.Sse.DoneFrame, cancellationToken);
         await Response.Body.FlushAsync(cancellationToken);
     }
 
@@ -146,7 +148,7 @@ public class PortfolioController : ControllerBase
         if (_rebalancingAgent is null)
         {
             Response.StatusCode = 503;
-            await Response.WriteAsync("data: Rebalancing agent is not configured.\n\n", cancellationToken);
+            await Response.WriteAsync(PortfolioConstants.Sse.RebalancingNotConfigured, cancellationToken);
             return;
         }
 
@@ -158,12 +160,12 @@ public class PortfolioController : ControllerBase
         }
 
         var sessionId = string.IsNullOrWhiteSpace(request.SessionId)
-            ? $"{userId}:rebalancing:{Guid.NewGuid()}"
+            ? string.Format(PortfolioConstants.Session.RebalancingKeyFormat, userId, Guid.NewGuid())
             : request.SessionId;
 
-        Response.ContentType = "text/event-stream";
-        Response.Headers.CacheControl = "no-cache";
-        Response.Headers["X-Accel-Buffering"] = "no";
+        Response.ContentType = PortfolioConstants.Sse.ContentType;
+        Response.Headers.CacheControl = PortfolioConstants.Sse.CacheControlValue;
+        Response.Headers[PortfolioConstants.Sse.XAccelBufferingHeader] = PortfolioConstants.Sse.XAccelBufferingValue;
 
         await foreach (var chunk in _rebalancingAgent.ChatAsync(request.Message, userId, sessionId, cancellationToken))
         {
@@ -171,7 +173,7 @@ public class PortfolioController : ControllerBase
             await Response.Body.FlushAsync(cancellationToken);
         }
 
-        await Response.WriteAsync("data: [DONE]\n\n", cancellationToken);
+        await Response.WriteAsync(PortfolioConstants.Sse.DoneFrame, cancellationToken);
         await Response.Body.FlushAsync(cancellationToken);
     }
 
@@ -188,7 +190,7 @@ public class PortfolioController : ControllerBase
 
     private Guid GetUserId()
     {
-        var claim = User.FindFirst("uid")?.Value;
+        var claim = User.FindFirst(AuthConstants.Claims.UserId)?.Value;
         return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
     }
 }

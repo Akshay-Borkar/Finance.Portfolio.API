@@ -1,3 +1,5 @@
+using Finance.Contracts.Events;
+using Finance.NotificationService.Infrastructure.Constants;
 using Finance.NotificationService.Infrastructure.Consumers;
 using Finance.NotificationService.Infrastructure.Email;
 using MassTransit;
@@ -10,7 +12,7 @@ public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        services.Configure<EmailSettings>(configuration.GetSection(NotificationConstants.Config.EmailSettings));
         services.AddSingleton<EmailSender>();
 
         services.AddMassTransit(x =>
@@ -35,7 +37,7 @@ public static class InfrastructureServiceRegistration
             // Azure Service Bus configuration
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                var connectionString = configuration["ServiceBusConnectionString"];
+                var connectionString = configuration[NotificationConstants.Config.ServiceBusConnectionString];
                 if (string.IsNullOrWhiteSpace(connectionString))
                     throw new InvalidOperationException(
                         "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
@@ -47,19 +49,19 @@ public static class InfrastructureServiceRegistration
                 // ConfigureEndpoints convention-based naming (which would suffix "-consumer").
                 //
                 // Topic derived from message type (kebab-case simple name):
-                //   StockPriceUpdated      → topic: stock-price-updated
-                //   AlertTriggered         → topic: alert-triggered
+                //   StockPriceUpdated        → topic: stock-price-updated
+                //   AlertTriggered           → topic: alert-triggered
                 //   PortfolioReviewCompleted → topic: portfolio-review-completed
-                cfg.SubscriptionEndpoint<Finance.Contracts.Events.StockPriceUpdated>(
-                    "finance-notificationservice",
+                cfg.SubscriptionEndpoint<StockPriceUpdated>(
+                    NotificationConstants.ServiceBus.SubscriptionName,
                     e => e.ConfigureConsumer<StockPriceUpdatedConsumer>(ctx));
 
-                cfg.SubscriptionEndpoint<Finance.Contracts.Events.AlertTriggered>(
-                    "finance-notificationservice",
+                cfg.SubscriptionEndpoint<AlertTriggered>(
+                    NotificationConstants.ServiceBus.SubscriptionName,
                     e => e.ConfigureConsumer<AlertTriggeredConsumer>(ctx));
 
-                cfg.SubscriptionEndpoint<Finance.Contracts.Events.PortfolioReviewCompleted>(
-                    "finance-notificationservice",
+                cfg.SubscriptionEndpoint<PortfolioReviewCompleted>(
+                    NotificationConstants.ServiceBus.SubscriptionName,
                     e => e.ConfigureConsumer<PortfolioReviewCompletedConsumer>(ctx));
             });
         });

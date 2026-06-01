@@ -1,5 +1,6 @@
 using Finance.Contracts.Events;
 using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Constants;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -40,8 +41,8 @@ public class StockPriceUpdateJob : IStockPriceUpdateJob
                 var price = result.Meta.RegularMarketPrice;
                 if (price <= 0) continue;
 
-                // Cache price for background service reads (5-minute TTL)
-                await _cache.SetCacheAsync($"mkt:price:{ticker}", price, 5);
+                // Cache price for background service reads
+                await _cache.SetCacheAsync($"{MarketDataConstants.Redis.PriceCacheKeyPrefix}{ticker}", price, MarketDataConstants.Redis.PriceCacheTtlMinutes);
 
                 // Notify Alert Service and Notification Service
                 await _publishEndpoint.Publish(new StockPriceUpdated(

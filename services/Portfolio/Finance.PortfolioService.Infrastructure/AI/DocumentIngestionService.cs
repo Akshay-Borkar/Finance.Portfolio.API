@@ -1,5 +1,6 @@
 #pragma warning disable SKEXP0001 // ITextEmbeddingGenerationService is experimental
 using Azure;
+using Finance.PortfolioService.Infrastructure.Constants;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Finance.PortfolioService.Application.Contracts.AI;
@@ -11,7 +12,7 @@ namespace Finance.PortfolioService.Infrastructure.AI;
 
 public class DocumentIngestionService : IDocumentIngestionService
 {
-    private const int BatchSize = 16;
+    private const int BatchSize = PortfolioInfrastructureConstants.AI.IngestionBatchSize;
 
     private readonly DocumentChunkingService _chunker;
     private readonly ITextEmbeddingGenerationService _embedder;

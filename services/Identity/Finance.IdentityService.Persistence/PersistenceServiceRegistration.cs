@@ -1,5 +1,6 @@
 using Finance.IdentityService.Domain;
 using Finance.IdentityService.Persistence.DbContext;
+using Finance.SharedKernel.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +18,8 @@ public static class PersistenceServiceRegistration
             options.UseSqlServer(
                 configuration.GetConnectionString("IdentityDb"),
                 sql => sql.EnableRetryOnFailure(
-                    maxRetryCount: 5,
-                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    maxRetryCount: AuthConstants.Database.RetryMaxCount,
+                    maxRetryDelay: TimeSpan.FromSeconds(AuthConstants.Database.RetryDelaySeconds),
                     errorNumbersToAdd: null)));
 
         services.AddIdentity<ApplicationUser, IdentityRole>()

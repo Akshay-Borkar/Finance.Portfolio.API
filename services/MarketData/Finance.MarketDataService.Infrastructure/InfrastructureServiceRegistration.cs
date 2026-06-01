@@ -1,4 +1,5 @@
 using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.MarketDataService.Infrastructure.Consumers;
 using Finance.MarketDataService.Infrastructure.Hangfire;
 using Finance.MarketDataService.Infrastructure.Redis;
@@ -22,8 +23,8 @@ public static class InfrastructureServiceRegistration
         // ── Redis ─────────────────────────────────────────────────────────────
         IConnectionMultiplexer? redis = null;
 
-        var redisEndpoint = configuration["RedisEndpoint"];
-        var redisPassword = configuration["RedisPassword"];
+        var redisEndpoint = configuration[MarketDataConstants.Config.RedisEndpoint];
+        var redisPassword = configuration[MarketDataConstants.Config.RedisPassword];
 
         if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
         {
@@ -32,7 +33,7 @@ public static class InfrastructureServiceRegistration
                 AbortOnConnectFail = false,
                 Ssl = true,
                 Password = redisPassword,
-                ConnectTimeout = 5000
+                ConnectTimeout = MarketDataConstants.Redis.ConnectTimeoutMs
             };
             redisConfig.EndPoints.Add(redisEndpoint);
 
@@ -92,7 +93,7 @@ public static class InfrastructureServiceRegistration
             // Azure Service Bus configuration
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                var connectionString = configuration["ServiceBusConnectionString"];
+                var connectionString = configuration[MarketDataConstants.Config.ServiceBusConnectionString];
                 if (string.IsNullOrWhiteSpace(connectionString))
                     throw new InvalidOperationException(
                         "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");

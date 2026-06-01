@@ -2,6 +2,7 @@ using Finance.MarketDataService.API.Protos;
 using Finance.PortfolioService.Application.Contracts.AI;
 using Finance.PortfolioService.Application.Contracts.MarketData;
 using Finance.PortfolioService.Infrastructure.AI;
+using Finance.PortfolioService.Infrastructure.Constants;
 using Finance.PortfolioService.Infrastructure.GrpcClients;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,7 @@ public static class InfrastructureServiceRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var marketDataGrpcAddress = configuration["MarketData:GrpcAddress"] ?? "http://marketdata-svc:8081";
+        var marketDataGrpcAddress = configuration[PortfolioInfrastructureConstants.Config.MarketDataGrpcAddress] ?? PortfolioInfrastructureConstants.Config.DefaultGrpcAddress;
 
         services.AddGrpcClient<MarketDataGrpc.MarketDataGrpcClient>(o =>
         {
@@ -44,7 +45,7 @@ public static class InfrastructureServiceRegistration
             // Azure Service Bus configuration
             x.UsingAzureServiceBus((ctx, cfg) =>
             {
-                var connectionString = configuration["ServiceBusConnectionString"];
+                var connectionString = configuration[PortfolioInfrastructureConstants.Config.ServiceBusConnectionString];
                 if (string.IsNullOrWhiteSpace(connectionString))
                     throw new InvalidOperationException(
                         "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
@@ -54,10 +55,10 @@ public static class InfrastructureServiceRegistration
             });
         });
 
-        services.Configure<AzureOpenAISettings>(configuration.GetSection("AzureOpenAI"));
-        services.Configure<AzureSearchSettings>(configuration.GetSection("AzureSearch"));
+        services.Configure<AzureOpenAISettings>(configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureOpenAISection));
+        services.Configure<AzureSearchSettings>(configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureSearchSection));
 
-        var aiSettings = configuration.GetSection("AzureOpenAI").Get<AzureOpenAISettings>();
+        var aiSettings = configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureOpenAISection).Get<AzureOpenAISettings>();
         if (aiSettings?.IsConfigured == true)
         {
             var kernel = Kernel.CreateBuilder()

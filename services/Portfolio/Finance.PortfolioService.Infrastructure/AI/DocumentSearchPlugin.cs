@@ -1,6 +1,7 @@
 #pragma warning disable SKEXP0001 // ITextEmbeddingGenerationService is experimental
 using System.ComponentModel;
 using System.Text;
+using Finance.PortfolioService.Infrastructure.Constants;
 using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
@@ -14,7 +15,7 @@ namespace Finance.PortfolioService.Infrastructure.AI;
 
 public class DocumentSearchPlugin
 {
-    private const int TopK = 5;
+    private const int TopK = PortfolioInfrastructureConstants.AI.SearchTopK;
 
     private const string SystemPrompt =
         """

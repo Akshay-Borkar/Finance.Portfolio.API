@@ -1,22 +1,23 @@
 using System.Security.Claims;
+using Finance.Gateway.Constants;
 using Finance.SharedKernel.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection(GatewayConstants.Config.ReverseProxySection));
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000", "https://stfinanceportfolio.z19.web.core.windows.net")
+    options.AddPolicy(AuthConstants.Cors.PolicyName, policy =>
+        policy.WithOrigins(AuthConstants.Cors.AllowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
@@ -24,7 +25,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors("CorsPolicy");
+app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -34,19 +35,19 @@ app.Use(async (context, next) =>
 {
     if (context.User.Identity?.IsAuthenticated == true)
     {
-        var userId = context.User.FindFirstValue("uid");
+        var userId = context.User.FindFirstValue(AuthConstants.Claims.UserId);
         var email = context.User.FindFirstValue(ClaimTypes.Email)
-                 ?? context.User.FindFirstValue("email");
+                 ?? context.User.FindFirstValue(AuthConstants.Claims.Email);
 
         if (userId is not null)
-            context.Request.Headers["X-User-Id"] = userId;
+            context.Request.Headers[AuthConstants.Headers.UserId] = userId;
         if (email is not null)
-            context.Request.Headers["X-User-Email"] = email;
+            context.Request.Headers[AuthConstants.Headers.UserEmail] = email;
     }
     await next();
 });
 
 app.MapReverseProxy();
-app.MapGet("/health", () => Results.Ok(new { service = "gateway", status = "healthy" }));
+app.MapGet("/health", () => Results.Ok(new { service = GatewayConstants.ServiceName, status = "healthy" }));
 
 app.Run();

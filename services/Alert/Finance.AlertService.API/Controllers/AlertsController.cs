@@ -3,6 +3,8 @@ using Finance.AlertService.Application.Features.Alerts;
 using Finance.AlertService.Application.Features.Alerts.CreateAlert;
 using Finance.AlertService.Application.Features.Alerts.DeleteAlert;
 using Finance.AlertService.Application.Features.Alerts.GetUserAlerts;
+using Finance.AlertService.Infrastructure.Constants;
+using Finance.SharedKernel.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +25,8 @@ public class AlertsController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<PagedResult<AlertDto>>> GetAlerts(
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int page = AuthConstants.Pagination.DefaultPage,
+        [FromQuery] int pageSize = AuthConstants.Pagination.DefaultPageSize)
     {
         var userId = GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
@@ -41,7 +43,7 @@ public class AlertsController : ControllerBase
         if (command.UserId == Guid.Empty) return Unauthorized();
 
         command.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
-            ?? User.FindFirst("email")?.Value
+            ?? User.FindFirst(AuthConstants.Claims.Email)?.Value
             ?? string.Empty;
 
         var id = await _mediator.Send(command);
@@ -61,7 +63,7 @@ public class AlertsController : ControllerBase
 
     private Guid GetUserId()
     {
-        var claim = User.FindFirst("uid")?.Value;
+        var claim = User.FindFirst(AuthConstants.Claims.UserId)?.Value;
         return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
     }
 }

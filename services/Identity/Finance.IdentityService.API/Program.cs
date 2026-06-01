@@ -1,5 +1,6 @@
 using Finance.IdentityService.API.Middleware;
 using Finance.IdentityService.Infrastructure;
+using Finance.IdentityService.Infrastructure.Constants;
 using Finance.IdentityService.Persistence;
 using Finance.IdentityService.Persistence.DbContext;
 using Finance.SharedKernel.Auth;
@@ -9,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
 });
 
 builder.Services.AddIdentityPersistence(builder.Configuration);
@@ -21,8 +22,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", policy =>
-        policy.WithOrigins("http://localhost:4200", "http://localhost:3000", "https://stfinanceportfolio.z19.web.core.windows.net")
+    options.AddPolicy(AuthConstants.Cors.PolicyName, policy =>
+        policy.WithOrigins(AuthConstants.Cors.AllowedOrigins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
@@ -38,11 +39,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapOpenApi();
-app.UseCors("CorsPolicy");
+app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapGet("/health", () => Results.Ok(new { service = "identity", status = "healthy" }));
+app.MapGet("/health", () => Results.Ok(new { service = IdentityConstants.ServiceName, status = "healthy" }));
 
 app.Run();

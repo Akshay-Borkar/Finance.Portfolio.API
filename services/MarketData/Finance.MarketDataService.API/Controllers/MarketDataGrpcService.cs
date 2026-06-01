@@ -1,5 +1,6 @@
 using Finance.MarketDataService.API.Protos;
 using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Constants;
 using Grpc.Core;
 
 namespace Finance.MarketDataService.API.Controllers;
@@ -26,7 +27,7 @@ public class MarketDataGrpcService : MarketDataGrpc.MarketDataGrpcBase
         var ticker = request.Ticker;
 
         // Try Redis cache first
-        var cached = await _cache.GetCacheAsync<decimal>($"mkt:price:{ticker}");
+        var cached = await _cache.GetCacheAsync<decimal>($"{MarketDataConstants.Redis.PriceCacheKeyPrefix}{ticker}");
         if (cached > 0)
             return new GetPriceResponse
             {
@@ -40,7 +41,7 @@ public class MarketDataGrpcService : MarketDataGrpc.MarketDataGrpcBase
         var price = response?.Chart?.Result?.FirstOrDefault()?.Meta?.RegularMarketPrice ?? 0;
 
         if (price > 0)
-            await _cache.SetCacheAsync($"mkt:price:{ticker}", price, 5);
+            await _cache.SetCacheAsync($"{MarketDataConstants.Redis.PriceCacheKeyPrefix}{ticker}", price, MarketDataConstants.Redis.PriceCacheTtlMinutes);
 
         _logger.LogInformation("gRPC GetCurrentPrice {Ticker} → {Price}", ticker, price);
 
@@ -57,8 +58,8 @@ public class MarketDataGrpcService : MarketDataGrpc.MarketDataGrpcBase
     {
         var bars = await _stockQuote.FetchOhlcvAsync(
             request.Ticker,
-            string.IsNullOrEmpty(request.Interval) ? "1d" : request.Interval,
-            string.IsNullOrEmpty(request.Range)    ? "1mo" : request.Range);
+            string.IsNullOrEmpty(request.Interval) ? MarketDataConstants.OhlcvDefaults.Interval : request.Interval,
+            string.IsNullOrEmpty(request.Range) ? MarketDataConstants.OhlcvDefaults.Range : request.Range);
 
         var response = new GetOhlcvResponse();
         response.Bars.AddRange(bars.Select(b => new Protos.OhlcvBar
