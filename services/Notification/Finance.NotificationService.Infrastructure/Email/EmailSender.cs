@@ -13,7 +13,7 @@ public class EmailSender
         _settings = settings.Value;
     }
 
-    public async Task<bool> SendAsync(string to, string subject, string htmlContent)
+    public async Task<bool> SendAsync(string to, string subject, string htmlContent, CancellationToken cancellationToken = default)
     {
         var client = new SendGridClient(_settings.ApiKey);
         var from = new EmailAddress(_settings.FromAddress, _settings.FromName);
@@ -24,7 +24,7 @@ public class EmailSender
             htmlContent,
             htmlContent);
 
-        var response = await client.SendEmailAsync(msg);
+        var response = await client.SendEmailAsync(msg, cancellationToken);
         return response.IsSuccessStatusCode;
     }
 }

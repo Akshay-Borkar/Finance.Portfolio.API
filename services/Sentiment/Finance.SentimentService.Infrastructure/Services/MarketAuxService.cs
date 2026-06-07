@@ -30,17 +30,17 @@ public class MarketAuxService : IMarketAuxService
                 "MarketAux:ApiToken is not configured. Add it to user secrets or environment variables.");
     }
 
-    public async Task<List<string>> FetchLatestStockNews(string ticker)
+    public async Task<List<string>> FetchLatestStockNews(string ticker, CancellationToken cancellationToken = default)
     {
         // MarketAux accepts NSE/BSE tickers in the format used by the caller (e.g. TCS.NS, RELIANCE.NS)
         var url = $"{BaseUrl}?symbols={Uri.EscapeDataString(ticker)}&filter_entities=true&language=en&api_token={_apiToken}";
 
         try
         {
-            var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+            var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             var result = JsonSerializer.Deserialize<MarketAuxResponse>(json, JsonOptions);
 
             if (result?.Data is null or { Count: 0 })

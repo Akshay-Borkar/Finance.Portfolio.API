@@ -29,7 +29,7 @@ public class AlertTriggeredConsumer : IConsumer<AlertTriggered>
             <p>Log in to your dashboard to review your portfolio.</p>
             """;
 
-        var sent = await _emailSender.SendAsync(msg.UserEmail, subject, html);
+        var sent = await _emailSender.SendAsync(msg.UserEmail, subject, html, context.CancellationToken);
 
         _logger.LogInformation(
             "Alert email {Status} to {Email} for {Ticker} (alert {AlertId})",

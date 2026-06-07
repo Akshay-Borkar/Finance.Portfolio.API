@@ -4,6 +4,7 @@ using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.PortfolioService.Domain.Entities;
 using MassTransit;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Finance.PortfolioService.Application.Features.Portfolio.Commands.AddStock;
 
@@ -12,15 +13,18 @@ public class AddStockCommandHandler : IRequestHandler<AddStockCommand, Guid>
     private readonly IStockRepository _stockRepository;
     private readonly IMarketDataGrpcClient _marketData;
     private readonly IPublishEndpoint _publisher;
+    private readonly ILogger<AddStockCommandHandler> _logger;
 
     public AddStockCommandHandler(
         IStockRepository stockRepository,
         IMarketDataGrpcClient marketData,
-        IPublishEndpoint publisher)
+        IPublishEndpoint publisher,
+        ILogger<AddStockCommandHandler> logger)
     {
         _stockRepository = stockRepository;
         _marketData = marketData;
         _publisher = publisher;
+        _logger = logger;
     }
 
     public async Task<Guid> Handle(AddStockCommand request, CancellationToken cancellationToken)
@@ -30,7 +34,10 @@ public class AddStockCommandHandler : IRequestHandler<AddStockCommand, Guid>
         {
             currentPrice = await _marketData.GetCurrentPriceAsync(request.Ticker, cancellationToken);
         }
-        catch { /* proceed with 0 if Market Data service is unavailable */ }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to fetch current price for {Ticker} from Market Data service, defaulting to 0", request.Ticker);
+        }
 
         var stock = new Stock
         {

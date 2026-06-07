@@ -1,6 +1,7 @@
 using Finance.PortfolioService.Application.Contracts.MarketData;
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Finance.PortfolioService.Application.Features.Portfolio.Queries.GetPortfolioSummary;
 
@@ -9,15 +10,18 @@ public class GetPortfolioSummaryQueryHandler : IRequestHandler<GetPortfolioSumma
     private readonly IInvestmentRepository _investmentRepository;
     private readonly IStockRepository _stockRepository;
     private readonly IMarketDataGrpcClient _marketData;
+    private readonly ILogger<GetPortfolioSummaryQueryHandler> _logger;
 
     public GetPortfolioSummaryQueryHandler(
         IInvestmentRepository investmentRepository,
         IStockRepository stockRepository,
-        IMarketDataGrpcClient marketData)
+        IMarketDataGrpcClient marketData,
+        ILogger<GetPortfolioSummaryQueryHandler> logger)
     {
         _investmentRepository = investmentRepository;
         _stockRepository = stockRepository;
         _marketData = marketData;
+        _logger = logger;
     }
 
     public async Task<PortfolioSummaryDto> Handle(GetPortfolioSummaryQuery request, CancellationToken cancellationToken)
@@ -37,8 +41,9 @@ public class GetPortfolioSummaryQueryHandler : IRequestHandler<GetPortfolioSumma
                 var price = await _marketData.GetCurrentPriceAsync(ticker, cancellationToken);
                 return (ticker, price: (double)price);
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogWarning(ex, "Failed to fetch price for {Ticker} from Market Data service, falling back to cached price", ticker);
                 var fallback = allUserStocks.FirstOrDefault(s => s.Ticker == ticker)?.CurrentPrice ?? 0m;
                 return (ticker, price: (double)fallback);
             }

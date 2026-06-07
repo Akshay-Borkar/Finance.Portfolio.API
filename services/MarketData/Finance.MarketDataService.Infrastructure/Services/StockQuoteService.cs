@@ -12,23 +12,23 @@ public class StockQuoteService : IStockQuoteService
     public StockQuoteService(IHttpClientFactory httpClientFactory) =>
         _httpClientFactory = httpClientFactory;
 
-    public async Task<StockApiResponse?> FetchStockQuoteAsync(string ticker)
+    public async Task<StockApiResponse?> FetchStockQuoteAsync(string ticker, CancellationToken cancellationToken = default)
     {
         using var client = BuildClient();
-        var response = await client.GetAsync(string.Format(ChartUrl, ticker));
+        var response = await client.GetAsync(string.Format(ChartUrl, ticker), cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         return JsonConvert.DeserializeObject<StockApiResponse>(content);
     }
 
-    public async Task<List<OhlcvBar>> FetchOhlcvAsync(string ticker, string interval, string range)
+    public async Task<List<OhlcvBar>> FetchOhlcvAsync(string ticker, string interval, string range, CancellationToken cancellationToken = default)
     {
         using var client = BuildClient();
         var url = $"{string.Format(ChartUrl, ticker)}?interval={interval}&range={range}";
-        var response = await client.GetAsync(url);
+        var response = await client.GetAsync(url, cancellationToken).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
 
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         var parsed = JsonConvert.DeserializeObject<StockApiResponse>(content);
 
         var result = parsed?.Chart?.Result?.FirstOrDefault();

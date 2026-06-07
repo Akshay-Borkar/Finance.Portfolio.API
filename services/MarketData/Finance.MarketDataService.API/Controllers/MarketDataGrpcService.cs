@@ -37,7 +37,7 @@ public class MarketDataGrpcService : MarketDataGrpc.MarketDataGrpcBase
             };
 
         // Cache miss — fetch live from Yahoo Finance
-        var response = await _stockQuote.FetchStockQuoteAsync(ticker);
+        var response = await _stockQuote.FetchStockQuoteAsync(ticker, context.CancellationToken);
         var price = response?.Chart?.Result?.FirstOrDefault()?.Meta?.RegularMarketPrice ?? 0;
 
         if (price > 0)
@@ -59,7 +59,8 @@ public class MarketDataGrpcService : MarketDataGrpc.MarketDataGrpcBase
         var bars = await _stockQuote.FetchOhlcvAsync(
             request.Ticker,
             string.IsNullOrEmpty(request.Interval) ? MarketDataConstants.OhlcvDefaults.Interval : request.Interval,
-            string.IsNullOrEmpty(request.Range) ? MarketDataConstants.OhlcvDefaults.Range : request.Range);
+            string.IsNullOrEmpty(request.Range) ? MarketDataConstants.OhlcvDefaults.Range : request.Range,
+            context.CancellationToken);
 
         var response = new GetOhlcvResponse();
         response.Bars.AddRange(bars.Select(b => new Protos.OhlcvBar

@@ -2,5 +2,5 @@ namespace Finance.SentimentService.Infrastructure.Services;
 
 public interface IMarketAuxService
 {
-    Task<List<string>> FetchLatestStockNews(string ticker);
+    Task<List<string>> FetchLatestStockNews(string ticker, CancellationToken cancellationToken = default);
 }

@@ -34,7 +34,7 @@ public class StockPriceUpdateJob : IStockPriceUpdateJob
         {
             try
             {
-                var response = await _stockQuote.FetchStockQuoteAsync(ticker);
+                var response = await _stockQuote.FetchStockQuoteAsync(ticker, CancellationToken.None);
                 var result = response?.Chart?.Result?.FirstOrDefault();
                 if (result is null) continue;
 

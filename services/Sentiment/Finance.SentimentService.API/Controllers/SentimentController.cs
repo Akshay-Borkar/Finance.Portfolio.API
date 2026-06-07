@@ -21,9 +21,9 @@ public class SentimentController : ControllerBase
     }
 
     [HttpGet("analyze/{ticker}")]
-    public async Task<IActionResult> AnalyzeStockNews(string ticker)
+    public async Task<IActionResult> AnalyzeStockNews(string ticker, CancellationToken cancellationToken)
     {
-        var articles = await _marketAuxService.FetchLatestStockNews(ticker);
+        var articles = await _marketAuxService.FetchLatestStockNews(ticker, cancellationToken);
 
         var results = articles.Select(article => new
         {
