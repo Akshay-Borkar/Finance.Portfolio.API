@@ -1,5 +1,6 @@
 using Finance.AgentService.Infrastructure.Orchestration;
 using Finance.Contracts.Events;
+using Finance.SharedKernel.Auth;
 using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ public class AgentsController : ControllerBase
         [FromBody] RunPortfolioReviewRequest request,
         CancellationToken cancellationToken)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty)
             return Unauthorized();
 
@@ -63,7 +64,7 @@ public class AgentsController : ControllerBase
         [FromBody] RunPortfolioReviewRequest request,
         CancellationToken cancellationToken)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty)
             return Unauthorized();
 
@@ -77,11 +78,6 @@ public class AgentsController : ControllerBase
         return Accepted(new { message = "Portfolio review scheduled. Check your notifications shortly." });
     }
 
-    private Guid GetUserId()
-    {
-        var claim = User.FindFirst("uid")?.Value;
-        return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
-    }
 }
 
 public record RunPortfolioReviewRequest(string[] Tickers);

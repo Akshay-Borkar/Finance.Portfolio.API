@@ -1,4 +1,4 @@
-using Finance.IdentityService.Application.Exceptions;
+using Finance.SharedKernel.Auth.Exceptions;
 using Finance.IdentityService.Application.Models;
 using Finance.IdentityService.Domain;
 using Finance.IdentityService.Infrastructure.Services;

@@ -1,4 +1,4 @@
-using Finance.IdentityService.API.Middleware;
+using Finance.SharedKernel.Auth.Middleware;
 using Finance.IdentityService.Infrastructure;
 using Finance.IdentityService.Infrastructure.Constants;
 using Finance.IdentityService.Persistence;

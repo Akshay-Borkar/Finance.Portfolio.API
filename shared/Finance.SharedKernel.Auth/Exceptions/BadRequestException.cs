@@ -1,6 +1,6 @@
 using FluentValidation.Results;
 
-namespace Finance.AlertService.Application.Exceptions;
+namespace Finance.SharedKernel.Auth.Exceptions;
 
 public class BadRequestException : Exception
 {

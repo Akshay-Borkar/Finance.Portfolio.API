@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Finance.IdentityService.API.Models;
+namespace Finance.SharedKernel.Auth.Models;
 
 public class CustomValidationProblemDetails : ProblemDetails
 {

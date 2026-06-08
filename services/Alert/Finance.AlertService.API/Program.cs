@@ -1,4 +1,4 @@
-using Finance.AlertService.API.Middleware;
+using Finance.SharedKernel.Auth.Middleware;
 using Finance.AlertService.Application;
 using Finance.AlertService.Infrastructure;
 using Finance.AlertService.Persistence;

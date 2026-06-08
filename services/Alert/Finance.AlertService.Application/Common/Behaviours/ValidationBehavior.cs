@@ -1,4 +1,4 @@
-using Finance.AlertService.Application.Exceptions;
+using Finance.SharedKernel.Auth.Exceptions;
 using FluentValidation;
 using MediatR;
 

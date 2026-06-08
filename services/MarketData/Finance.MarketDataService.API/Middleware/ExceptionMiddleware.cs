@@ -1,5 +1,5 @@
 using System.Net;
-using Finance.MarketDataService.API.Models;
+using Finance.SharedKernel.Auth.Models;
 
 namespace Finance.MarketDataService.API.Middleware;
 

@@ -1,4 +1,4 @@
-using Finance.SentimentService.API.Middleware;
+using Finance.SharedKernel.Auth.Middleware;
 using Finance.SentimentService.Infrastructure;
 using Finance.SentimentService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;

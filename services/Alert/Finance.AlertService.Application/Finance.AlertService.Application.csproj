@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Finance.AlertService.Domain\Finance.AlertService.Domain.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
   </ItemGroup>
 
 </Project>

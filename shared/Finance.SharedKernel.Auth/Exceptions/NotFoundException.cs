@@ -1,4 +1,4 @@
-namespace Finance.PortfolioService.Application.Exceptions;
+namespace Finance.SharedKernel.Auth.Exceptions;
 
 public class NotFoundException : Exception
 {

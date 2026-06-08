@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Finance.IdentityService.Application\Finance.IdentityService.Application.csproj" />
     <ProjectReference Include="..\Finance.IdentityService.Persistence\Finance.IdentityService.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

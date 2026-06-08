@@ -41,7 +41,7 @@ public class PortfolioController : ControllerBase
     [HttpGet("summary")]
     public async Task<ActionResult<PortfolioSummaryDto>> GetSummary()
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
         var result = await _mediator.Send(new GetPortfolioSummaryQuery(userId));
@@ -53,7 +53,7 @@ public class PortfolioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> AddStock([FromBody] AddStockCommand command)
     {
-        command.UserId = GetUserId();
+        command.UserId = User.GetUserId();
         if (command.UserId == Guid.Empty) return Unauthorized();
 
         var id = await _mediator.Send(command);
@@ -65,7 +65,7 @@ public class PortfolioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> AddInvestment([FromBody] AddInvestmentCommand command)
     {
-        command.UserId = GetUserId();
+        command.UserId = User.GetUserId();
         if (command.UserId == Guid.Empty) return Unauthorized();
 
         var id = await _mediator.Send(command);
@@ -77,7 +77,7 @@ public class PortfolioController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> DeleteStock(Guid stockId)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
         await _mediator.Send(new DeleteStockCommand(stockId, userId));
@@ -100,7 +100,7 @@ public class PortfolioController : ControllerBase
         [FromQuery] int page = AuthConstants.Pagination.DefaultPage,
         [FromQuery] int pageSize = AuthConstants.Pagination.DefaultPageSize)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
         var result = await _mediator.Send(new GetInvestmentsByStockIdQuery(stockId, userId, page, pageSize));
@@ -122,7 +122,7 @@ public class PortfolioController : ControllerBase
         Response.Headers.CacheControl = PortfolioConstants.Sse.CacheControlValue;
         Response.Headers.Connection = PortfolioConstants.Sse.ConnectionValue;
 
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty)
         {
             Response.StatusCode = 401;
@@ -152,7 +152,7 @@ public class PortfolioController : ControllerBase
             return;
         }
 
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty)
         {
             Response.StatusCode = 401;
@@ -188,9 +188,4 @@ public class PortfolioController : ControllerBase
         return Ok();
     }
 
-    private Guid GetUserId()
-    {
-        var claim = User.FindFirst(AuthConstants.Claims.UserId)?.Value;
-        return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
-    }
 }

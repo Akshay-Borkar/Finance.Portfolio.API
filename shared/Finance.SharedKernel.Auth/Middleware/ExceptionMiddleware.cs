@@ -1,8 +1,10 @@
 using System.Net;
-using Finance.IdentityService.API.Models;
-using Finance.IdentityService.Application.Exceptions;
+using Finance.SharedKernel.Auth.Exceptions;
+using Finance.SharedKernel.Auth.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
-namespace Finance.IdentityService.API.Middleware;
+namespace Finance.SharedKernel.Auth.Middleware;
 
 public class ExceptionMiddleware
 {
@@ -15,7 +17,7 @@ public class ExceptionMiddleware
         _logger = logger;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
@@ -38,11 +40,11 @@ public class ExceptionMiddleware
                 statusCode = HttpStatusCode.BadRequest;
                 problem = new CustomValidationProblemDetails
                 {
-                    Title = bad.Message,
+                    Title = "Bad Request",
                     Status = (int)statusCode,
                     Type = nameof(BadRequestException),
-                    Detail = bad.InnerException?.Message,
-                    Errors = bad.ValidationErrors ?? new Dictionary<string, string[]>()
+                    Detail = bad.Message,
+                    Errors = bad.ValidationErrors
                 };
                 break;
 
@@ -50,26 +52,26 @@ public class ExceptionMiddleware
                 statusCode = HttpStatusCode.NotFound;
                 problem = new CustomValidationProblemDetails
                 {
-                    Title = notFound.Message,
+                    Title = "Not Found",
                     Status = (int)statusCode,
                     Type = nameof(NotFoundException),
-                    Detail = notFound.InnerException?.Message
+                    Detail = notFound.Message
                 };
                 break;
 
             default:
+                _logger.LogError(ex, "Unhandled exception");
                 problem = new CustomValidationProblemDetails
                 {
-                    Title = ex.Message,
+                    Title = "Internal Server Error",
                     Status = (int)statusCode,
                     Type = nameof(HttpStatusCode.InternalServerError),
-                    Detail = ex.StackTrace
+                    Detail = "An unexpected error occurred."
                 };
                 break;
         }
 
         context.Response.StatusCode = (int)statusCode;
-        _logger.LogError("Unhandled exception: {Title} | {Detail}", problem.Title, problem.Detail);
         await context.Response.WriteAsJsonAsync(problem);
     }
 }

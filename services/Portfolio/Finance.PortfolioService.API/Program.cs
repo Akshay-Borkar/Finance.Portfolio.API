@@ -1,4 +1,4 @@
-using Finance.PortfolioService.API.Middleware;
+using Finance.SharedKernel.Auth.Middleware;
 using Finance.PortfolioService.Application;
 using Finance.PortfolioService.Infrastructure;
 using Finance.PortfolioService.Persistence;

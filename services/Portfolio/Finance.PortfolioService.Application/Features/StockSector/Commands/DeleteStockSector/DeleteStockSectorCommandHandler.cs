@@ -1,5 +1,5 @@
 using Finance.PortfolioService.Application.Contracts.Persistence;
-using Finance.PortfolioService.Application.Exceptions;
+using Finance.SharedKernel.Auth.Exceptions;
 using Finance.PortfolioService.Domain.Entities;
 using MediatR;
 

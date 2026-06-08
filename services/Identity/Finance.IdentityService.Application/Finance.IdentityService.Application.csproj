@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.IdentityService.Domain\Finance.IdentityService.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

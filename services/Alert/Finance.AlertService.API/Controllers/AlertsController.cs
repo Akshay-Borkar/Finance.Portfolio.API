@@ -28,7 +28,7 @@ public class AlertsController : ControllerBase
         [FromQuery] int page = AuthConstants.Pagination.DefaultPage,
         [FromQuery] int pageSize = AuthConstants.Pagination.DefaultPageSize)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
         var result = await _mediator.Send(new GetUserAlertsQuery(userId, page, pageSize));
@@ -39,7 +39,7 @@ public class AlertsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult> CreateAlert([FromBody] CreateAlertCommand command)
     {
-        command.UserId = GetUserId();
+        command.UserId = User.GetUserId();
         if (command.UserId == Guid.Empty) return Unauthorized();
 
         command.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value
@@ -54,16 +54,11 @@ public class AlertsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> DeleteAlert(Guid alertId)
     {
-        var userId = GetUserId();
+        var userId = User.GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
         await _mediator.Send(new DeleteAlertCommand(alertId, userId));
         return NoContent();
     }
 
-    private Guid GetUserId()
-    {
-        var claim = User.FindFirst(AuthConstants.Claims.UserId)?.Value;
-        return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
-    }
 }

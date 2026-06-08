@@ -1,4 +1,4 @@
-using Finance.PortfolioService.Application.Exceptions;
+using Finance.SharedKernel.Auth.Exceptions;
 using FluentValidation;
 using MediatR;
 

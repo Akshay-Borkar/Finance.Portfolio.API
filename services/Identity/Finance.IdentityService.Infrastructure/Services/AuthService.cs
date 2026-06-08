@@ -2,7 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Finance.IdentityService.Application.Contracts;
-using Finance.IdentityService.Application.Exceptions;
+using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Auth.Exceptions;
 using Finance.IdentityService.Application.Models;
 using Finance.IdentityService.Domain;
 using Microsoft.AspNetCore.Identity;
@@ -79,7 +80,7 @@ public class AuthService : IAuthService
             new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim("uid", user.Id)
+            new Claim(AuthConstants.Claims.UserId, user.Id)
         }
         .Union(userClaims)
         .Union(roleClaims);
