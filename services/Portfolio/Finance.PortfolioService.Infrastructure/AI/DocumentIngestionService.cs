@@ -1,11 +1,9 @@
 #pragma warning disable SKEXP0001 // ITextEmbeddingGenerationService is experimental
-using Azure;
-using Finance.PortfolioService.Infrastructure.Constants;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Finance.PortfolioService.Application.Contracts.AI;
+using Finance.PortfolioService.Infrastructure.Constants;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel.Embeddings;
 
 namespace Finance.PortfolioService.Infrastructure.AI;
@@ -16,18 +14,18 @@ public class DocumentIngestionService : IDocumentIngestionService
 
     private readonly DocumentChunkingService _chunker;
     private readonly ITextEmbeddingGenerationService _embedder;
-    private readonly AzureSearchSettings _searchSettings;
+    private readonly SearchClient _searchClient;
     private readonly ILogger<DocumentIngestionService> _logger;
 
     public DocumentIngestionService(
         DocumentChunkingService chunker,
         ITextEmbeddingGenerationService embedder,
-        IOptions<AzureSearchSettings> searchSettings,
+        SearchClient searchClient,
         ILogger<DocumentIngestionService> logger)
     {
         _chunker = chunker;
         _embedder = embedder;
-        _searchSettings = searchSettings.Value;
+        _searchClient = searchClient;
         _logger = logger;
     }
 
@@ -37,11 +35,6 @@ public class DocumentIngestionService : IDocumentIngestionService
 
         var chunks = _chunker.ChunkPdf(pdfStream, fileName);
         _logger.LogInformation("'{FileName}' produced {Count} chunks.", fileName, chunks.Count);
-
-        var searchClient = new SearchClient(
-            new Uri(_searchSettings.Endpoint),
-            _searchSettings.IndexName,
-            new AzureKeyCredential(_searchSettings.AdminKey));
 
         for (int i = 0; i < chunks.Count; i += BatchSize)
         {
@@ -60,7 +53,7 @@ public class DocumentIngestionService : IDocumentIngestionService
                 ["embedding"] = embedding.ToArray()
             }).ToList();
 
-            await searchClient.MergeOrUploadDocumentsAsync(documents, cancellationToken: cancellationToken);
+            await _searchClient.MergeOrUploadDocumentsAsync(documents, cancellationToken: cancellationToken);
             _logger.LogInformation("Upserted batch {Batch}/{Total} for '{FileName}'.",
                 i / BatchSize + 1, (int)Math.Ceiling((double)chunks.Count / BatchSize), fileName);
         }

@@ -6,17 +6,19 @@ namespace Finance.NotificationService.Infrastructure.Email;
 
 public class EmailSender
 {
-    private readonly EmailSettings _settings;
+    private readonly SendGridClient _client;
+    private readonly EmailAddress _from;
 
     public EmailSender(IOptions<EmailSettings> settings)
     {
-        _settings = settings.Value;
+        var s = settings.Value;
+        _client = new SendGridClient(s.ApiKey);
+        _from = new EmailAddress(s.FromAddress, s.FromName);
     }
 
     public async Task<bool> SendAsync(string to, string subject, string htmlContent, CancellationToken cancellationToken = default)
     {
-        var client = new SendGridClient(_settings.ApiKey);
-        var from = new EmailAddress(_settings.FromAddress, _settings.FromName);
+        var from = _from;
         var msg = MailHelper.CreateSingleEmail(
             from,
             new EmailAddress(to),
@@ -24,7 +26,7 @@ public class EmailSender
             htmlContent,
             htmlContent);
 
-        var response = await client.SendEmailAsync(msg, cancellationToken);
+        var response = await _client.SendEmailAsync(msg, cancellationToken);
         return response.IsSuccessStatusCode;
     }
 }

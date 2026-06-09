@@ -1,12 +1,9 @@
-using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using Finance.PortfolioService.API.Constants;
 using Finance.PortfolioService.Application.Contracts.AI;
-using Finance.PortfolioService.Infrastructure.AI;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Finance.PortfolioService.API.Controllers;
 
@@ -15,11 +12,10 @@ namespace Finance.PortfolioService.API.Controllers;
 [Authorize]
 public class DocumentsController(
     IServiceScopeFactory scopeFactory,
-    IOptions<AzureSearchSettings> searchSettings,
     ILogger<DocumentsController> logger,
-    IDocumentIngestionService? ingestion = null) : ControllerBase
+    IDocumentIngestionService? ingestion = null,
+    SearchClient? searchClient = null) : ControllerBase
 {
-    private readonly AzureSearchSettings _searchSettings = searchSettings.Value;
 
     [HttpPost("ingest")]
     [Consumes("multipart/form-data")]
@@ -75,13 +71,8 @@ public class DocumentsController(
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<IEnumerable<string>>> ListDocuments(CancellationToken cancellationToken)
     {
-        if (!_searchSettings.IsConfigured)
+        if (searchClient is null)
             return StatusCode(503, "Azure AI Search is not configured.");
-
-        var searchClient = new SearchClient(
-            new Uri(_searchSettings.Endpoint),
-            _searchSettings.IndexName,
-            new AzureKeyCredential(_searchSettings.AdminKey));
 
         var options = new SearchOptions
         {

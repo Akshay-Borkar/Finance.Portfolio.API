@@ -1,12 +1,10 @@
 #pragma warning disable SKEXP0001 // ITextEmbeddingGenerationService is experimental
 using System.ComponentModel;
 using System.Text;
-using Finance.PortfolioService.Infrastructure.Constants;
-using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using Finance.PortfolioService.Infrastructure.Constants;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Embeddings;
@@ -30,18 +28,18 @@ public class DocumentSearchPlugin
 
     private readonly ITextEmbeddingGenerationService _embedder;
     private readonly IChatCompletionService _chat;
-    private readonly AzureSearchSettings _searchSettings;
+    private readonly SearchClient? _searchClient;
     private readonly ILogger<DocumentSearchPlugin> _logger;
 
     public DocumentSearchPlugin(
         ITextEmbeddingGenerationService embedder,
         IChatCompletionService chat,
-        IOptions<AzureSearchSettings> searchSettings,
-        ILogger<DocumentSearchPlugin> logger)
+        ILogger<DocumentSearchPlugin> logger,
+        SearchClient? searchClient = null)
     {
         _embedder = embedder;
         _chat = chat;
-        _searchSettings = searchSettings.Value;
+        _searchClient = searchClient;
         _logger = logger;
     }
 
@@ -57,18 +55,13 @@ public class DocumentSearchPlugin
     {
         _logger.LogInformation("DocumentSearchPlugin invoked with question: {Question}", question);
 
-        if (!_searchSettings.IsConfigured)
+        if (_searchClient is null)
         {
             _logger.LogWarning("DocumentSearchPlugin called but AzureSearch is not configured.");
             return "Document search is not configured.";
         }
 
         var embedding = await _embedder.GenerateEmbeddingAsync(question);
-
-        var searchClient = new SearchClient(
-            new Uri(_searchSettings.Endpoint),
-            _searchSettings.IndexName,
-            new AzureKeyCredential(_searchSettings.AdminKey));
 
         var searchOptions = new SearchOptions
         {
@@ -87,7 +80,7 @@ public class DocumentSearchPlugin
             Select = { "content", "sourceFile", "pageNumber" }
         };
 
-        var response = await searchClient.SearchAsync<SearchDocument>(question, searchOptions);
+        var response = await _searchClient.SearchAsync<SearchDocument>(question, searchOptions);
 
         var contextBuilder = new StringBuilder();
         await foreach (var result in response.Value.GetResultsAsync())

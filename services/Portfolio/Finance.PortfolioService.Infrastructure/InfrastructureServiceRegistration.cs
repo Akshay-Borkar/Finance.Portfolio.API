@@ -1,3 +1,5 @@
+using Azure;
+using Azure.Search.Documents;
 using Finance.MarketDataService.API.Protos;
 using Finance.PortfolioService.Application.Contracts.AI;
 using Finance.PortfolioService.Application.Contracts.MarketData;
@@ -57,6 +59,15 @@ public static class InfrastructureServiceRegistration
 
         services.Configure<AzureOpenAISettings>(configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureOpenAISection));
         services.Configure<AzureSearchSettings>(configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureSearchSection));
+
+        var searchSettings = configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureSearchSection).Get<AzureSearchSettings>();
+        if (searchSettings?.IsConfigured == true)
+        {
+            services.AddSingleton(new SearchClient(
+                new Uri(searchSettings.Endpoint),
+                searchSettings.IndexName,
+                new AzureKeyCredential(searchSettings.AdminKey)));
+        }
 
         var aiSettings = configuration.GetSection(PortfolioInfrastructureConstants.Config.AzureOpenAISection).Get<AzureOpenAISettings>();
         if (aiSettings?.IsConfigured == true)
