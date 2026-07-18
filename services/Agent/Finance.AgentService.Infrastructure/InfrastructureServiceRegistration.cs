@@ -44,35 +44,44 @@ public static class InfrastructureServiceRegistration
         {
             x.AddConsumer<PortfolioReviewRequestedConsumer>();
 
-            // RabbitMQ configuration (for local dev without Service Bus)
-            // x.UsingRabbitMq((ctx, cfg) =>
-            // {
-            //     cfg.Host(configuration["RabbitMq:Host"] ?? "rabbitmq", h =>
-            //     {
-            //         h.Username(configuration["RabbitMq:Username"] ?? "guest");
-            //         h.Password(configuration["RabbitMq:Password"] ?? "guest");
-            //     });
-            //     cfg.ConfigureEndpoints(ctx);
-            // });
-
-            x.UsingAzureServiceBus((ctx, cfg) =>
+            // Transport is selected at startup based on configuration: RabbitMq:Host wins when
+            // present (local/dev via docker-compose), otherwise falls back to Azure Service Bus
+            // (staging/prod). Both branches stay wired so switching is a config change, not a code change.
+            var rabbitMqHost = configuration["RabbitMq:Host"];
+            if (!string.IsNullOrWhiteSpace(rabbitMqHost))
             {
-                var connectionString = configuration[AgentConstants.ServiceBus.ServiceBusConnectionString];
-                if (string.IsNullOrWhiteSpace(connectionString))
-                    throw new InvalidOperationException(
-                        "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
+                // RabbitMQ configuration (for local dev without Service Bus)
+                x.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(rabbitMqHost, h =>
+                    {
+                        h.Username(configuration["RabbitMq:Username"] ?? "guest");
+                        h.Password(configuration["RabbitMq:Password"] ?? "guest");
+                    });
+                    cfg.ConfigureEndpoints(ctx);
+                });
+            }
+            else
+            {
+                x.UsingAzureServiceBus((ctx, cfg) =>
+                {
+                    var connectionString = configuration[AgentConstants.ServiceBus.ServiceBusConnectionString];
+                    if (string.IsNullOrWhiteSpace(connectionString))
+                        throw new InvalidOperationException(
+                            "Neither RabbitMq:Host nor ServiceBusConnectionString is configured. Set one to enable messaging.");
 
-                cfg.Host(connectionString);
+                    cfg.Host(connectionString);
 
-                // Explicit subscription name on topic "portfolio-review-requested".
-                // MassTransit derives the topic from the message type (Finance.Contracts.Events.PortfolioReviewRequested
-                // → "portfolio-review-requested"). The subscription name must be set explicitly; otherwise MassTransit
-                // defaults to the consumer class name in kebab-case, which would be
-                // "portfolio-review-requested-consumer" — not what Azure Service Bus expects.
-                cfg.SubscriptionEndpoint<PortfolioReviewRequested>(
-                    AgentConstants.ServiceBus.SubscriptionName,
-                    e => e.ConfigureConsumer<PortfolioReviewRequestedConsumer>(ctx));
-            });
+                    // Explicit subscription name on topic "portfolio-review-requested".
+                    // MassTransit derives the topic from the message type (Finance.Contracts.Events.PortfolioReviewRequested
+                    // → "portfolio-review-requested"). The subscription name must be set explicitly; otherwise MassTransit
+                    // defaults to the consumer class name in kebab-case, which would be
+                    // "portfolio-review-requested-consumer" — not what Azure Service Bus expects.
+                    cfg.SubscriptionEndpoint<PortfolioReviewRequested>(
+                        AgentConstants.ServiceBus.SubscriptionName,
+                        e => e.ConfigureConsumer<PortfolioReviewRequestedConsumer>(ctx));
+                });
+            }
         });
 
         return services;

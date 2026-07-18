@@ -79,28 +79,37 @@ public static class InfrastructureServiceRegistration
             x.AddConsumer<StockAddedConsumer>();
             x.AddConsumer<StockRemovedConsumer>();
 
-            // RabbitMQ configuration
-            // x.UsingRabbitMq((ctx, cfg) =>
-            // {
-            //     cfg.Host(configuration["RabbitMq:Host"] ?? "localhost", "/", h =>
-            //     {
-            //         h.Username(configuration["RabbitMq:Username"] ?? "guest");
-            //         h.Password(configuration["RabbitMq:Password"] ?? "guest");
-            //     });
-            //     cfg.ConfigureEndpoints(ctx);
-            // });
-
-            // Azure Service Bus configuration
-            x.UsingAzureServiceBus((ctx, cfg) =>
+            // Transport is selected at startup based on configuration: RabbitMq:Host wins when
+            // present (local/dev via docker-compose), otherwise falls back to Azure Service Bus
+            // (staging/prod). Both branches stay wired so switching is a config change, not a code change.
+            var rabbitMqHost = configuration["RabbitMq:Host"];
+            if (!string.IsNullOrWhiteSpace(rabbitMqHost))
             {
-                var connectionString = configuration[MarketDataConstants.Config.ServiceBusConnectionString];
-                if (string.IsNullOrWhiteSpace(connectionString))
-                    throw new InvalidOperationException(
-                        "ServiceBusConnectionString is not configured. Add it to appsettings or user secrets.");
+                // RabbitMQ configuration
+                x.UsingRabbitMq((ctx, cfg) =>
+                {
+                    cfg.Host(rabbitMqHost, "/", h =>
+                    {
+                        h.Username(configuration["RabbitMq:Username"] ?? "guest");
+                        h.Password(configuration["RabbitMq:Password"] ?? "guest");
+                    });
+                    cfg.ConfigureEndpoints(ctx);
+                });
+            }
+            else
+            {
+                // Azure Service Bus configuration
+                x.UsingAzureServiceBus((ctx, cfg) =>
+                {
+                    var connectionString = configuration[MarketDataConstants.Config.ServiceBusConnectionString];
+                    if (string.IsNullOrWhiteSpace(connectionString))
+                        throw new InvalidOperationException(
+                            "Neither RabbitMq:Host nor ServiceBusConnectionString is configured. Set one to enable messaging.");
 
-                cfg.Host(connectionString);
-                cfg.ConfigureEndpoints(ctx);
-            });
+                    cfg.Host(connectionString);
+                    cfg.ConfigureEndpoints(ctx);
+                });
+            }
         });
 
         return services;
