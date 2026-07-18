@@ -21,24 +21,22 @@ builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
 var signalR = builder.Services.AddSignalR();
 
-var redisEndpoint = builder.Configuration[NotificationConstants.Config.RedisEndpoint];
-var redisPassword = builder.Configuration[NotificationConstants.Config.RedisPassword];
+// A single connection string covers both cases: a bare "host:port" for local/docker Redis
+// (no auth, no TLS), or a full Azure Cache for Redis connection string (which already embeds
+// password/ssl/abortConnect) — no code change needed to switch targets.
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 
-if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
+if (!string.IsNullOrWhiteSpace(redisConnectionString))
 {
     signalR.AddStackExchangeRedis(options =>
     {
         options.ConnectionFactory = async writer =>
         {
-            var config = new StackExchange.Redis.ConfigurationOptions
-            {
-                AbortOnConnectFail = false,
-                Ssl = true,
-                Password = redisPassword,
-                ConnectTimeout = NotificationConstants.Config.RedisConnectTimeoutMs,
-                SyncTimeout = NotificationConstants.Config.RedisSyncTimeoutMs
-            };
-            config.EndPoints.Add(redisEndpoint);
+            var config = StackExchange.Redis.ConfigurationOptions.Parse(redisConnectionString);
+            config.AbortOnConnectFail = false;
+            config.ConnectTimeout = NotificationConstants.Config.RedisConnectTimeoutMs;
+            config.SyncTimeout = NotificationConstants.Config.RedisSyncTimeoutMs;
+
             var connection = await StackExchange.Redis
                 .ConnectionMultiplexer.ConnectAsync(config, writer);
             return connection;

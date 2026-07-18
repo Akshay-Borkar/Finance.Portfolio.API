@@ -30,8 +30,6 @@ public static class MarketDataConstants
 
     public static class Config
     {
-        public const string RedisEndpoint = "RedisEndpoint";
-        public const string RedisPassword = "RedisPassword";
         public const string ServiceBusConnectionString = "ServiceBusConnectionString";
     }
 }

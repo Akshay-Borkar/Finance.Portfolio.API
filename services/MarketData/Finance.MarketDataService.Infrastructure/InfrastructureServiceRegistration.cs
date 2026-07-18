@@ -21,24 +21,21 @@ public static class InfrastructureServiceRegistration
         IConfiguration configuration)
     {
         // ── Redis ─────────────────────────────────────────────────────────────
+        // A single connection string covers both cases: a bare "host:port" for local/docker
+        // Redis (no auth, no TLS), or a full Azure Cache for Redis connection string (which
+        // already embeds password/ssl/abortConnect) — no code change needed to switch targets.
         IConnectionMultiplexer? redis = null;
 
-        var redisEndpoint = configuration[MarketDataConstants.Config.RedisEndpoint];
-        var redisPassword = configuration[MarketDataConstants.Config.RedisPassword];
+        var redisConnectionString = configuration.GetConnectionString("Redis");
 
-        if (!string.IsNullOrEmpty(redisEndpoint) && !string.IsNullOrEmpty(redisPassword))
+        if (!string.IsNullOrWhiteSpace(redisConnectionString))
         {
-            var redisConfig = new ConfigurationOptions
-            {
-                AbortOnConnectFail = false,
-                Ssl = true,
-                Password = redisPassword,
-                ConnectTimeout = MarketDataConstants.Redis.ConnectTimeoutMs
-            };
-            redisConfig.EndPoints.Add(redisEndpoint);
-
             try
             {
+                var redisConfig = ConfigurationOptions.Parse(redisConnectionString);
+                redisConfig.AbortOnConnectFail = false;
+                redisConfig.ConnectTimeout = MarketDataConstants.Redis.ConnectTimeoutMs;
+
                 redis = ConnectionMultiplexer.Connect(redisConfig);
             }
             catch { /* fall back to in-memory below */ }
