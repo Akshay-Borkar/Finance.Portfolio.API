@@ -2,6 +2,7 @@ using Finance.SharedKernel.Auth.Middleware;
 using Finance.SentimentService.Infrastructure;
 using Finance.SentimentService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();

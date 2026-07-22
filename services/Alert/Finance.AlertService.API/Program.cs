@@ -5,6 +5,7 @@ using Finance.AlertService.Persistence;
 using Finance.AlertService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -5,6 +5,7 @@ using Finance.MarketDataService.Infrastructure;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
 using Hangfire;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +51,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseMiddleware<ExceptionMiddleware>();
 

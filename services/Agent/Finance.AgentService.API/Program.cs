@@ -1,5 +1,6 @@
 using Finance.AgentService.Infrastructure;
 using Finance.SharedKernel.Auth;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddControllers();
+builder.Services.AddOpenApi();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
@@ -25,6 +27,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();

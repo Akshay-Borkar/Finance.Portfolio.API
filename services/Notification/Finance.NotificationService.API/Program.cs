@@ -5,6 +5,7 @@ using Finance.NotificationService.Persistence;
 using Finance.NotificationService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Configuration.AddUserSecrets<Program>();
 builder.Services.AddNotificationPersistence(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
+builder.Services.AddOpenApi();
 
 var signalR = builder.Services.AddSignalR();
 
@@ -55,6 +57,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseAuthentication();
 app.UseAuthorization();

@@ -5,6 +5,7 @@ using Finance.IdentityService.Persistence;
 using Finance.IdentityService.Persistence.DbContext;
 using Finance.SharedKernel.Auth;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.MapOpenApi();
+app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
