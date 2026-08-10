@@ -1,5 +1,6 @@
 using Finance.AlertService.Infrastructure.Constants;
 using Finance.AlertService.Infrastructure.Consumers;
+using Finance.SharedKernel.Logging.Messaging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,7 @@ public static class InfrastructureServiceRegistration
                         h.Username(configuration["RabbitMq:Username"] ?? "guest");
                         h.Password(configuration["RabbitMq:Password"] ?? "guest");
                     });
+                    cfg.UseCorrelationLogging(ctx);
                     cfg.ConfigureEndpoints(ctx);
                 });
             }
@@ -42,6 +44,7 @@ public static class InfrastructureServiceRegistration
                             "Neither RabbitMq:Host nor ServiceBusConnectionString is configured. Set one to enable messaging.");
 
                     cfg.Host(connectionString);
+                    cfg.UseCorrelationLogging(ctx);
                     cfg.ConfigureEndpoints(ctx);
                 });
             }

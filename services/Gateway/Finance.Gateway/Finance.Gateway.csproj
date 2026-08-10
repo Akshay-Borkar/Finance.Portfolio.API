@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
   </ItemGroup>
 
 </Project>

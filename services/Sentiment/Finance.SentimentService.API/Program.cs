@@ -2,9 +2,13 @@ using Finance.SharedKernel.Auth.Middleware;
 using Finance.SentimentService.Infrastructure;
 using Finance.SentimentService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Logging;
+using Finance.SharedKernel.Logging.Middleware;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddSharedLogging(SentimentConstants.ServiceName);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -31,6 +35,7 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

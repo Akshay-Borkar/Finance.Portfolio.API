@@ -1,8 +1,13 @@
 using System.Security.Claims;
 using Finance.Gateway.Constants;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Logging;
+using Finance.SharedKernel.Logging.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddSharedLogging(GatewayConstants.ServiceName);
+
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
     options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
@@ -26,6 +31,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors(AuthConstants.Cors.PolicyName);
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

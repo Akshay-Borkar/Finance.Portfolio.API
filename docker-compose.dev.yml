@@ -28,5 +28,18 @@ services:
       RABBITMQ_DEFAULT_USER: "finance"
       RABBITMQ_DEFAULT_PASS: "Finance@123"
 
+  # Structured log viewer — services log here (via Serilog, see Seq:Url in appsettings.Development.json)
+  # in addition to the console. UI at http://localhost:8081, ingestion at localhost:5341.
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "5341:5341"
+      - "8081:80"
+    environment:
+      ACCEPT_EULA: "Y"
+    volumes:
+      - seqdata-dev:/data
+
 volumes:
   sqldata-dev:
+  seqdata-dev:

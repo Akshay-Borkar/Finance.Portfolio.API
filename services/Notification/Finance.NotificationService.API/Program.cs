@@ -4,10 +4,14 @@ using Finance.NotificationService.Infrastructure.Hubs;
 using Finance.NotificationService.Persistence;
 using Finance.NotificationService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Logging;
+using Finance.SharedKernel.Logging.Middleware;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddSharedLogging("notification");
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -60,6 +64,7 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

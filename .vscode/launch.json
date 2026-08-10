@@ -1,0 +1,105 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Identity",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Identity/Finance.IdentityService.API/bin/Debug/net10.0/Finance.IdentityService.API.dll",
+      "cwd": "${workspaceFolder}/services/Identity/Finance.IdentityService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Portfolio",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Portfolio/Finance.PortfolioService.API/bin/Debug/net10.0/Finance.PortfolioService.API.dll",
+      "cwd": "${workspaceFolder}/services/Portfolio/Finance.PortfolioService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "MarketData",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/MarketData/Finance.MarketDataService.API/bin/Debug/net10.0/Finance.MarketDataService.API.dll",
+      "cwd": "${workspaceFolder}/services/MarketData/Finance.MarketDataService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Alert",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Alert/Finance.AlertService.API/bin/Debug/net10.0/Finance.AlertService.API.dll",
+      "cwd": "${workspaceFolder}/services/Alert/Finance.AlertService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Sentiment",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Sentiment/Finance.SentimentService.API/bin/Debug/net10.0/Finance.SentimentService.API.dll",
+      "cwd": "${workspaceFolder}/services/Sentiment/Finance.SentimentService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Notification",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Notification/Finance.NotificationService.API/bin/Debug/net10.0/Finance.NotificationService.API.dll",
+      "cwd": "${workspaceFolder}/services/Notification/Finance.NotificationService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Agent",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Agent/Finance.AgentService.API/bin/Debug/net10.0/Finance.AgentService.API.dll",
+      "cwd": "${workspaceFolder}/services/Agent/Finance.AgentService.API",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    },
+    {
+      "name": "Gateway",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-solution",
+      "program": "${workspaceFolder}/services/Gateway/Finance.Gateway/bin/Debug/net10.0/Finance.Gateway.dll",
+      "cwd": "${workspaceFolder}/services/Gateway/Finance.Gateway",
+      "env": { "ASPNETCORE_ENVIRONMENT": "Development" },
+      "console": "integratedTerminal",
+      "stopAtEntry": false
+    }
+  ],
+  "compounds": [
+    {
+      "name": "StockAdded flow (Identity + Portfolio + MarketData)",
+      "configurations": ["Identity", "Portfolio", "MarketData"],
+      "stopAll": true
+    },
+    {
+      "name": "All Services",
+      "configurations": ["Identity", "Sentiment", "MarketData", "Portfolio", "Alert", "Notification", "Agent", "Gateway"],
+      "stopAll": true
+    }
+  ]
+}

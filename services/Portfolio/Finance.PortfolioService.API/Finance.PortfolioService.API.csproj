@@ -23,6 +23,7 @@
     <ProjectReference Include="..\Finance.PortfolioService.Infrastructure\Finance.PortfolioService.Infrastructure.csproj" />
     <ProjectReference Include="..\Finance.PortfolioService.Persistence\Finance.PortfolioService.Persistence.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
   </ItemGroup>
 
 </Project>

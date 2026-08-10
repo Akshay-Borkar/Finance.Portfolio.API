@@ -4,6 +4,7 @@ using Finance.MarketDataService.Infrastructure.Consumers;
 using Finance.MarketDataService.Infrastructure.Hangfire;
 using Finance.MarketDataService.Infrastructure.Redis;
 using Finance.MarketDataService.Infrastructure.Services;
+using Finance.SharedKernel.Logging.Messaging;
 using global::Hangfire;
 using global::Hangfire.InMemory;
 using global::Hangfire.Redis.StackExchange;
@@ -90,6 +91,7 @@ public static class InfrastructureServiceRegistration
                         h.Username(configuration["RabbitMq:Username"] ?? "guest");
                         h.Password(configuration["RabbitMq:Password"] ?? "guest");
                     });
+                    cfg.UseCorrelationLogging(ctx);
                     cfg.ConfigureEndpoints(ctx);
                 });
             }
@@ -104,6 +106,7 @@ public static class InfrastructureServiceRegistration
                             "Neither RabbitMq:Host nor ServiceBusConnectionString is configured. Set one to enable messaging.");
 
                     cfg.Host(connectionString);
+                    cfg.UseCorrelationLogging(ctx);
                     cfg.ConfigureEndpoints(ctx);
                 });
             }

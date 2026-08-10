@@ -1,8 +1,12 @@
 using Finance.AgentService.Infrastructure;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Logging;
+using Finance.SharedKernel.Logging.Middleware;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddSharedLogging("agent");
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -30,6 +34,7 @@ var app = builder.Build();
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

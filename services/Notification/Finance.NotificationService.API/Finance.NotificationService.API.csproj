@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Finance.NotificationService.Infrastructure\Finance.NotificationService.Infrastructure.csproj" />
     <ProjectReference Include="..\Finance.NotificationService.Persistence\Finance.NotificationService.Persistence.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
   </ItemGroup>
 
 </Project>

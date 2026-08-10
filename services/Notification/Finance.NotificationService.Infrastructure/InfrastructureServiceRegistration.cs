@@ -2,6 +2,7 @@ using Finance.Contracts.Events;
 using Finance.NotificationService.Infrastructure.Constants;
 using Finance.NotificationService.Infrastructure.Consumers;
 using Finance.NotificationService.Infrastructure.Email;
+using Finance.SharedKernel.Logging.Messaging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ public static class InfrastructureServiceRegistration
                         h.Username(configuration["RabbitMq:Username"] ?? "guest");
                         h.Password(configuration["RabbitMq:Password"] ?? "guest");
                     });
+                    cfg.UseCorrelationLogging(ctx);
                     cfg.ConfigureEndpoints(ctx);
                 });
             }
@@ -51,6 +53,7 @@ public static class InfrastructureServiceRegistration
                             "Neither RabbitMq:Host nor ServiceBusConnectionString is configured. Set one to enable messaging.");
 
                     cfg.Host(connectionString);
+                    cfg.UseCorrelationLogging(ctx);
 
                     // All three consumers are wired with SubscriptionEndpoint so MassTransit creates
                     // predictable topic/subscription pairs on Azure Service Bus without relying on

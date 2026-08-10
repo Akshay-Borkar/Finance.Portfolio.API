@@ -4,10 +4,14 @@ using Finance.MarketDataService.Application.Contracts;
 using Finance.MarketDataService.Infrastructure;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Logging;
+using Finance.SharedKernel.Logging.Middleware;
 using Hangfire;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddSharedLogging(MarketDataConstants.ServiceName);
 
 builder.Services.AddApplicationInsightsTelemetry(options =>
 {
@@ -29,30 +33,32 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Schedule Hangfire recurring jobs
-using (var scope = app.Services.CreateScope())
-{
-    var jobClient = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-    jobClient.AddOrUpdate<IStockPriceUpdateJob>(
-        MarketDataConstants.HangfireJobs.Minutely,
-        job => job.UpdateStockPricesAsync(),
-        Cron.Minutely());
-    jobClient.AddOrUpdate<IStockPriceUpdateJob>(
-        MarketDataConstants.HangfireJobs.Hourly,
-        job => job.UpdateStockPricesAsync(),
-        Cron.Hourly());
-    jobClient.AddOrUpdate<IStockPriceUpdateJob>(
-        MarketDataConstants.HangfireJobs.Daily,
-        job => job.UpdateStockPricesAsync(),
-        Cron.Daily());
-    jobClient.AddOrUpdate<IStockPriceUpdateJob>(
-        MarketDataConstants.HangfireJobs.Weekly,
-        job => job.UpdateStockPricesAsync(),
-        Cron.Weekly(DayOfWeek.Monday, 9, 0));
+if (!builder.Environment.IsDevelopment()) { 
+    using (var scope = app.Services.CreateScope())
+    {
+        var jobClient = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+        jobClient.AddOrUpdate<IStockPriceUpdateJob>(
+            MarketDataConstants.HangfireJobs.Minutely,
+            job => job.UpdateStockPricesAsync(),
+            Cron.Minutely());
+        jobClient.AddOrUpdate<IStockPriceUpdateJob>(
+            MarketDataConstants.HangfireJobs.Hourly,
+            job => job.UpdateStockPricesAsync(),
+            Cron.Hourly());
+        jobClient.AddOrUpdate<IStockPriceUpdateJob>(
+            MarketDataConstants.HangfireJobs.Daily,
+            job => job.UpdateStockPricesAsync(),
+            Cron.Daily());
+        jobClient.AddOrUpdate<IStockPriceUpdateJob>(
+            MarketDataConstants.HangfireJobs.Weekly,
+            job => job.UpdateStockPricesAsync(),
+            Cron.Weekly(DayOfWeek.Monday, 9, 0));
+    }
 }
-
 app.MapOpenApi();
 app.MapScalarApiReference();
 app.UseCors(AuthConstants.Cors.PolicyName);
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHangfireDashboard(MarketDataConstants.HangfireJobs.DashboardRoute);
