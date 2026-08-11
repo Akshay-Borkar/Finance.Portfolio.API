@@ -51,6 +51,11 @@ node_modules/
 .env
 !.env.example
 *.lscache
+
+# Per-machine local dev overrides — hold real secrets (JWT signing key, connection strings,
+# Azure AD tenant/client IDs). Untracked as of the Entra AD integration; appsettings.json (the
+# base, committed file) keeps empty placeholders for every key these can override.
+appsettings.Development.json
 # Claude Code
 .claude/
 
