@@ -8,6 +8,12 @@ public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
 {
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
+        // Lets many password-only users share NULL without violating uniqueness — only rows
+        // with an actual external oid (Entra sign-ins) are constrained to be distinct.
+        builder.HasIndex(u => u.ExternalObjectId)
+            .IsUnique()
+            .HasFilter("[ExternalObjectId] IS NOT NULL");
+
         builder.HasData(
             new ApplicationUser
             {

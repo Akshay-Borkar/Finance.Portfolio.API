@@ -14,6 +14,12 @@ public static class AuthConstants
         public const string UserEmail = "X-User-Email";
     }
 
+    public static class Schemes
+    {
+        public const string LocalJwt = "LocalJwt";
+        public const string EntraExternalId = "EntraExternalId";
+    }
+
     public static class Cors
     {
         public const string PolicyName = "CorsPolicy";
@@ -38,6 +44,11 @@ public static class AuthConstants
         public const string JwtIssuer = "JwtSettings:Issuer";
         public const string JwtAudience = "JwtSettings:Audience";
         public const string AppInsightsConnectionString = "ApplicationInsights:ConnectionString";
+
+        public const string AzureAdSection = "AzureAd";
+        public const string AzureAdInstance = "AzureAd:Instance";
+        public const string AzureAdTenantId = "AzureAd:TenantId";
+        public const string AzureAdAudience = "AzureAd:Audience";
     }
 
     public static class Database

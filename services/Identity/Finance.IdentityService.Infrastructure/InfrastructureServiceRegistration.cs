@@ -13,7 +13,9 @@ public static class InfrastructureServiceRegistration
         IConfiguration configuration)
     {
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+        services.AddTransient<IJwtTokenFactory, JwtTokenFactory>();
         services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IExternalAuthService, ExternalAuthService>();
         services.AddHttpContextAccessor();
 
         return services;

@@ -1,14 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Finance.IdentityService.Application.Contracts;
-using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Auth.Exceptions;
 using Finance.IdentityService.Application.Models;
 using Finance.IdentityService.Domain;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Finance.IdentityService.Infrastructure.Services;
 
@@ -16,16 +10,16 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly JwtSettings _jwtSettings;
+    private readonly IJwtTokenFactory _tokenFactory;
 
     public AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IOptions<JwtSettings> jwtSettings)
+        IJwtTokenFactory tokenFactory)
     {
         _userManager = userManager;
         _signInManager = signInManager;
-        _jwtSettings = jwtSettings.Value;
+        _tokenFactory = tokenFactory;
     }
 
     public async Task<AuthResponse> Login(AuthRequest request)
@@ -37,13 +31,13 @@ public class AuthService : IAuthService
         if (!result.Succeeded)
             throw new BadRequestException($"Credentials for '{request.UserName}' aren't valid.");
 
-        var token = await GenerateToken(user);
         return new AuthResponse
         {
             Id = user.Id,
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = await _tokenFactory.CreateTokenAsync(user),
             Email = user.Email ?? string.Empty,
-            UserName = user.UserName ?? string.Empty
+            UserName = user.UserName ?? string.Empty,
+            DisplayName = user.GetDisplayName()
         };
     }
 
@@ -67,32 +61,5 @@ public class AuthService : IAuthService
 
         await _userManager.AddToRoleAsync(user, request.Role);
         return new RegistrationResponse { UserId = user.Id };
-    }
-
-    private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
-    {
-        var userClaims = await _userManager.GetClaimsAsync(user);
-        var roles = await _userManager.GetRolesAsync(user);
-        var roleClaims = roles.Select(r => new Claim(ClaimTypes.Role, r));
-
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim(AuthConstants.Claims.UserId, user.Id)
-        }
-        .Union(userClaims)
-        .Union(roleClaims);
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        return new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
-            audience: _jwtSettings.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
-            signingCredentials: credentials);
     }
 }

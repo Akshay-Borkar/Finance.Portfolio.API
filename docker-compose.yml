@@ -66,6 +66,9 @@ services:
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
     depends_on:
       - identity-svc
       - portfolio-svc
@@ -89,6 +92,9 @@ services:
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
       JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -104,6 +110,9 @@ services:
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
 
   # Phase 4 ✅
   marketdata-svc:
@@ -137,6 +146,9 @@ services:
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
       JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
       MarketData__GrpcAddress: "http://marketdata-svc:8081"
       RabbitMq__Host: "${RABBITMQ_HOST}"
       RabbitMq__Username: "${RABBITMQ_USERNAME}"
@@ -164,6 +176,9 @@ services:
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
       JwtSettings__DurationInMinutes: "${JWT_DURATION_MINUTES}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
       RabbitMq__Host: "${RABBITMQ_HOST}"
       RabbitMq__Username: "${RABBITMQ_USERNAME}"
       RabbitMq__Password: "${RABBITMQ_PASSWORD}"
@@ -189,6 +204,9 @@ services:
       EmailSettings__ApiKey: "${SENDGRID_API_KEY}"
       EmailSettings__FromAddress: "${SENDGRID_FROM_ADDRESS}"
       EmailSettings__FromName: "${SENDGRID_FROM_NAME}"
+      AzureAd__Instance: "${AZURE_AD_INSTANCE}"
+      AzureAd__TenantId: "${AZURE_AD_TENANT_ID}"
+      AzureAd__Audience: "${AZURE_AD_AUDIENCE}"
       RabbitMq__Host: "${RABBITMQ_HOST}"
       RabbitMq__Username: "${RABBITMQ_USERNAME}"
       RabbitMq__Password: "${RABBITMQ_PASSWORD}"
