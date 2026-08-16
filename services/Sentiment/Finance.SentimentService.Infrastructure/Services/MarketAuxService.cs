@@ -35,35 +35,45 @@ public class MarketAuxService : IMarketAuxService
         // MarketAux accepts NSE/BSE tickers in the format used by the caller (e.g. TCS.NS, RELIANCE.NS)
         var url = $"{BaseUrl}?symbols={Uri.EscapeDataString(ticker)}&filter_entities=true&language=en&api_token={_apiToken}";
 
-        try
+        const int maxAttempts = 15;
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            var result = JsonSerializer.Deserialize<MarketAuxResponse>(json, JsonOptions);
-
-            if (result?.Data is null or { Count: 0 })
+            try
             {
-                _logger.LogWarning("MarketAux returned no articles for ticker {Ticker}", ticker);
-                return [];
-            }
+                var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
 
-            // Return headline; fall back to description if title is empty
-            return result.Data
-                .Select(a => string.IsNullOrWhiteSpace(a.Title) ? a.Description : a.Title)
-                .Where(t => !string.IsNullOrWhiteSpace(t))
-                .ToList();
+                var json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                var result = JsonSerializer.Deserialize<MarketAuxResponse>(json, JsonOptions);
+
+                if (result?.Data is null or { Count: 0 })
+                {
+                    _logger.LogWarning("MarketAux returned no articles for ticker {Ticker}", ticker);
+                    return [];
+                }
+
+                // Return headline; fall back to description if title is empty
+                return result.Data
+                    .Select(a => string.IsNullOrWhiteSpace(a.Title) ? a.Description : a.Title)
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .ToList();
+            }
+            catch (HttpRequestException ex) when (attempt < maxAttempts)
+            {
+                _logger.LogWarning(ex, "Transient error fetching MarketAux news for {Ticker}, retrying ({Attempt}/{MaxAttempts})", ticker, attempt, maxAttempts);
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP error fetching news from MarketAux for ticker {Ticker}", ticker);
+                throw;
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Failed to deserialize MarketAux response for ticker {Ticker}", ticker);
+                throw;
+            }
         }
-        catch (HttpRequestException ex)
-        {
-            _logger.LogError(ex, "HTTP error fetching news from MarketAux for ticker {Ticker}", ticker);
-            throw;
-        }
-        catch (JsonException ex)
-        {
-            _logger.LogError(ex, "Failed to deserialize MarketAux response for ticker {Ticker}", ticker);
-            throw;
-        }
+
+        throw new HttpRequestException($"Failed to fetch MarketAux news for {ticker} after {maxAttempts} attempts");
     }
 }
