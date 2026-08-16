@@ -2,16 +2,13 @@ using Finance.AgentService.Infrastructure;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging("agent");
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry("agent");
 
 builder.Configuration.AddUserSecrets<Program>();
 

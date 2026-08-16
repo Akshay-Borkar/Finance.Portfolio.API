@@ -6,17 +6,14 @@ using Finance.IdentityService.Persistence.DbContext;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging(IdentityConstants.ServiceName);
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry(IdentityConstants.ServiceName);
 
 builder.Services.AddIdentityPersistence(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);

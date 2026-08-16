@@ -44,11 +44,13 @@ public static class AuthConstants
         public const string JwtIssuer = "JwtSettings:Issuer";
         public const string JwtAudience = "JwtSettings:Audience";
         public const string AppInsightsConnectionString = "ApplicationInsights:ConnectionString";
+        public const string AppInsightsEnabled = "ApplicationInsights:Enabled";
 
         public const string AzureAdSection = "AzureAd";
         public const string AzureAdInstance = "AzureAd:Instance";
         public const string AzureAdTenantId = "AzureAd:TenantId";
         public const string AzureAdAudience = "AzureAd:Audience";
+        public const string AzureAdEnabled = "AzureAd:Enabled";
     }
 
     public static class Database

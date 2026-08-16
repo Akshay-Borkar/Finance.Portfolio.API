@@ -1,23 +1,19 @@
+using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Auth.Middleware;
 using Finance.PortfolioService.Application;
 using Finance.PortfolioService.Infrastructure;
 using Finance.PortfolioService.Persistence;
 using Finance.PortfolioService.Persistence.DatabaseContext;
-using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging("portfolio");
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
-builder.Services.AddApplicationInsightsTelemetryWorkerService();
+builder.AddSharedTelemetry("portfolio");
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(builder.Configuration);

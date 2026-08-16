@@ -45,5 +45,7 @@
   <Folder Name="/shared/">
     <Project Path="shared/Finance.Contracts/Finance.Contracts.csproj" />
     <Project Path="shared/Finance.SharedKernel.Auth/Finance.SharedKernel.Auth.csproj" />
+    <Project Path="shared/Finance.SharedKernel.Logging/Finance.SharedKernel.Logging.csproj" />
+    <Project Path="shared/Finance.SharedKernel.Telemetry/Finance.SharedKernel.Telemetry.csproj" />
   </Folder>
 </Solution>

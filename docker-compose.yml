@@ -63,6 +63,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
@@ -87,6 +88,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       ConnectionStrings__IdentityDb: "Server=${SQL_SERVER},1433;Database=IdentityDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
@@ -107,6 +109,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
       JwtSettings__Audience: "${JWT_AUDIENCE}"
@@ -122,6 +125,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       ConnectionStrings__Redis: "${REDIS_CONNECTION}"
       RabbitMq__Host: "${RABBITMQ_HOST}"
       RabbitMq__Username: "${RABBITMQ_USERNAME}"
@@ -141,6 +145,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       ConnectionStrings__PortfolioDb: "Server=${SQL_SERVER},1433;Database=PortfolioDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
@@ -171,6 +176,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       ConnectionStrings__AlertDb: "Server=${SQL_SERVER},1433;Database=AlertDB;User=sa;Password=${SQL_PASSWORD};TrustServerCertificate=True"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"
@@ -196,6 +202,7 @@ services:
     environment:
       ASPNETCORE_URLS: "http://+:8080"
       Seq__Url: "http://seq:5341"
+      ApplicationInsights__ConnectionString: "${APPINSIGHTS_CONNECTION_STRING}"
       ConnectionStrings__Redis: "${REDIS_CONNECTION}"
       JwtSettings__Key: "${JWT_SECRET}"
       JwtSettings__Issuer: "${JWT_ISSUER}"

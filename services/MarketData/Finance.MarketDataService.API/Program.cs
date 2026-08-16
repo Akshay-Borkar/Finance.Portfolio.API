@@ -6,17 +6,14 @@ using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Hangfire;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging(MarketDataConstants.ServiceName);
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry(MarketDataConstants.ServiceName);
 
 builder.Configuration.AddUserSecrets<Program>();
 

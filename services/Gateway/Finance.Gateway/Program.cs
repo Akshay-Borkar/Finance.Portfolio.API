@@ -3,15 +3,12 @@ using Finance.Gateway.Constants;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging(GatewayConstants.ServiceName);
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry(GatewayConstants.ServiceName);
 
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();

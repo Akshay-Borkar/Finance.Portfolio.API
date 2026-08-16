@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using MassTransit;
 using LogContext = Serilog.Context.LogContext;
 
@@ -17,6 +18,7 @@ public class CorrelationIdSendFilter<T> : IFilter<SendContext<T>> where T : clas
     {
         var correlationId = CorrelationContext.CorrelationId ?? Guid.NewGuid().ToString("n");
         context.Headers.Set(HeaderName, correlationId);
+        Activity.Current?.SetTag("correlation.id", correlationId);
         return next.Send(context);
     }
 }
@@ -33,6 +35,7 @@ public class CorrelationIdConsumeFilter<T> : IFilter<ConsumeContext<T>> where T 
     {
         var correlationId = context.Headers.Get<string>(CorrelationIdSendFilter<T>.HeaderName) ?? Guid.NewGuid().ToString("n");
         CorrelationContext.CorrelationId = correlationId;
+        Activity.Current?.SetTag("correlation.id", correlationId);
 
         using (LogContext.PushProperty("CorrelationId", correlationId))
         {

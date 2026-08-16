@@ -6,17 +6,14 @@ using Finance.AlertService.Persistence.DatabaseContext;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging("alert");
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry("alert");
 
 builder.Configuration.AddUserSecrets<Program>();
 

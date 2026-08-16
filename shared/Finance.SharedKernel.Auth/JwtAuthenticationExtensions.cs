@@ -58,12 +58,14 @@ public static class JwtAuthenticationExtensions
         // tenant's own JWKS (asymmetric, auto-discovered from Authority — no shared secret).
         // Guarded on Instance/TenantId actually having values (not just the section existing)
         // so shipping an empty "AzureAd": {} placeholder in appsettings — same convention as
-        // JwtSettings:Key="" — never registers a scheme with a malformed Authority. Only ever
-        // exercised by the one endpoint that requests it explicitly via
-        // [Authorize(AuthenticationSchemes = AuthConstants.Schemes.EntraExternalId)].
+        // JwtSettings:Key="" — never registers a scheme with a malformed Authority. Also guarded
+        // on AzureAd:Enabled (default true) so it can be switched off without clearing the actual
+        // tenant/instance values. Only ever exercised by the one endpoint that requests it
+        // explicitly via [Authorize(AuthenticationSchemes = AuthConstants.Schemes.EntraExternalId)].
+        var azureAdEnabled = configuration.GetValue(AuthConstants.Config.AzureAdEnabled, defaultValue: true);
         var instance = configuration[AuthConstants.Config.AzureAdInstance];
         var tenantId = configuration[AuthConstants.Config.AzureAdTenantId];
-        if (!string.IsNullOrWhiteSpace(instance) && !string.IsNullOrWhiteSpace(tenantId))
+        if (azureAdEnabled && !string.IsNullOrWhiteSpace(instance) && !string.IsNullOrWhiteSpace(tenantId))
         {
             auth.AddJwtBearer(AuthConstants.Schemes.EntraExternalId, options =>
             {

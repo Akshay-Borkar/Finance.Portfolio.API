@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using Serilog.Context;
@@ -8,6 +9,9 @@ namespace Finance.SharedKernel.Logging.Middleware;
 /// Reads (or generates) a correlation id per request, echoes it back on the response,
 /// and pushes it onto the Serilog LogContext + <see cref="CorrelationContext"/> so every
 /// log line for this request — and any RabbitMQ/Service Bus message it triggers — carries it.
+/// Also tags it onto the current OTel Activity (if telemetry is enabled) so it shows up as a
+/// custom dimension on the matching Application Insights trace, for cross-referencing against
+/// Seq — the id itself stays independent of the W3C trace id that actually stitches the trace.
 /// </summary>
 public class CorrelationIdMiddleware
 {
@@ -31,6 +35,7 @@ public class CorrelationIdMiddleware
         context.Request.Headers[HeaderName] = correlationId;
         context.Response.Headers[HeaderName] = correlationId;
         CorrelationContext.CorrelationId = correlationId;
+        Activity.Current?.SetTag("correlation.id", correlationId);
 
         using (LogContext.PushProperty("CorrelationId", correlationId))
         {

@@ -4,16 +4,13 @@ using Finance.SentimentService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
+using Finance.SharedKernel.Telemetry;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddSharedLogging(SentimentConstants.ServiceName);
-
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration[AuthConstants.Config.AppInsightsConnectionString];
-});
+builder.AddSharedTelemetry(SentimentConstants.ServiceName);
 
 builder.Services.AddSentimentInfrastructure();
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
