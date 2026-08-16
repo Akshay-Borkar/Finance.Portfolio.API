@@ -23,8 +23,8 @@ public class JwtTokenFactory : IJwtTokenFactory
 
     public async Task<string> CreateTokenAsync(ApplicationUser user)
     {
-        var userClaims = await _userManager.GetClaimsAsync(user);
-        var roles = await _userManager.GetRolesAsync(user);
+        var userClaims = _userManager.GetClaimsAsync(user).GetAwaiter().GetResult();
+        var roles = _userManager.GetRolesAsync(user).GetAwaiter().GetResult();
         var roleClaims = roles.Select(r => new Claim(ClaimTypes.Role, r));
 
         var claims = new[]
