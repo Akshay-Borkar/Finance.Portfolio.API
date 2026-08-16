@@ -70,7 +70,7 @@ public class GetPortfolioSummaryQueryHandler : IRequestHandler<GetPortfolioSumma
                 foreach (var inv in stockInvestments)
                 {
                     double invested = (double)inv.InvestedAmount;
-                    double qty = inv.BuyingPrice > 0 ? invested / inv.BuyingPrice : 0;
+                    double qty = invested / inv.BuyingPrice;
                     totalInvested += invested;
                     totalQuantity += qty;
                 }
