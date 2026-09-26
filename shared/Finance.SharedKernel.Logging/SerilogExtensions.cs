@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 namespace Finance.SharedKernel.Logging;
 
@@ -13,7 +15,9 @@ public static class SerilogExtensions
     /// Replaces the default console logger with structured Serilog output: readable text in
     /// Development, compact JSON elsewhere, always enriched with service name, correlation id
     /// (via LogContext, see CorrelationIdMiddleware) and W3C trace/span ids. Optionally ships
-    /// to Seq when Seq:Url is configured, so all services' logs land in one searchable place.
+    /// to Seq when Seq:Url is configured, and to Application Insights (as trace telemetry) when
+    /// ApplicationInsights:ConnectionString is set and ApplicationInsights:Enabled isn't false —
+    /// the same switch Finance.SharedKernel.Telemetry uses for distributed traces.
     /// </summary>
     public static WebApplicationBuilder AddSharedLogging(this WebApplicationBuilder builder, string serviceName)
     {
@@ -41,6 +45,13 @@ public static class SerilogExtensions
             if (!string.IsNullOrWhiteSpace(seqUrl))
             {
                 configuration.WriteTo.Seq(seqUrl);
+            }
+
+            var appInsightsEnabled = context.Configuration.GetValue("ApplicationInsights:Enabled", defaultValue: true);
+            var appInsightsConnectionString = context.Configuration["ApplicationInsights:ConnectionString"];
+            if (appInsightsEnabled && !string.IsNullOrWhiteSpace(appInsightsConnectionString))
+            {
+                configuration.WriteTo.ApplicationInsights(appInsightsConnectionString, TelemetryConverter.Traces);
             }
         });
 
