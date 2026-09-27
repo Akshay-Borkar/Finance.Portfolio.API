@@ -1,0 +1,35 @@
+<Project>
+
+  <!-- Applies to all 28 projects. Companion to Directory.Packages.props, which does the same
+       for package versions: settings that should be identical everywhere live in one place
+       rather than being copy-pasted per project and drifting. -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Nothing surfaced unused usings, unused private members or obvious correctness slips
+         before this: no analyzers were enabled and no .editorconfig existed, so the whole
+         category was invisible. EnforceCodeStyleInBuild is what makes the IDE* rules in
+         .editorconfig report during a build rather than only inside the IDE. -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- IDE0005 (unnecessary using directive) is silently skipped during build unless the
+         documentation file is generated — a long-standing Roslyn quirk. Turning that on
+         brings CS1591 (missing XML comment on a public member) with it, which would be
+         thousands of warnings on an app that is not a published library, so it is suppressed. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- Deliberately not TreatWarningsAsErrors. Semantic Kernel 1.71.0 emits 7 CS0618
+         deprecations that are being kept visible on purpose as the checklist for the 1.8x
+         migration, and turning warnings into errors would force them to be suppressed
+         instead — losing exactly the signal they exist to provide. -->
+  </PropertyGroup>
+
+</Project>

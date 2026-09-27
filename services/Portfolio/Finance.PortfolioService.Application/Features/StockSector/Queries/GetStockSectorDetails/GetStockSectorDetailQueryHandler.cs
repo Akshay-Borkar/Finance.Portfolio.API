@@ -1,6 +1,5 @@
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.SharedKernel.Auth.Exceptions;
-using Finance.PortfolioService.Application.Entities;
 using MediatR;
 
 namespace Finance.PortfolioService.Application.Features.StockSector.Queries.GetStockSectorDetails;

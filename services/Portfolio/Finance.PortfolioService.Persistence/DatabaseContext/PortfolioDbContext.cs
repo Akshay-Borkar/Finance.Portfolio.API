@@ -1,6 +1,5 @@
 using Finance.PortfolioService.Application.Common;
 using Finance.PortfolioService.Application.Entities;
-using Finance.PortfolioService.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Finance.PortfolioService.Persistence.DatabaseContext;

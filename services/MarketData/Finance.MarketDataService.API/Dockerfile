@@ -6,8 +6,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Central Package Management: every csproj omits Version, so the restore fails without this.
-COPY Directory.Packages.props ./
+# Central Package Management plus the shared TargetFramework/analyzer settings live at the repo
+# root, and the build context does not include root files unless they are copied explicitly.
+COPY Directory.Build.props Directory.Packages.props ./
 COPY shared/Finance.Contracts/ shared/Finance.Contracts/
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
 COPY shared/Finance.SharedKernel.Logging/ shared/Finance.SharedKernel.Logging/

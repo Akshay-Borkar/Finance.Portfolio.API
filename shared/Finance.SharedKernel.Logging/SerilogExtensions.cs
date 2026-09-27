@@ -5,7 +5,6 @@ using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 
 namespace Finance.SharedKernel.Logging;
 

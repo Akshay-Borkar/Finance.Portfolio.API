@@ -3,7 +3,6 @@ using Finance.AlertService.Application.Features.Alerts;
 using Finance.AlertService.Application.Features.Alerts.CreateAlert;
 using Finance.AlertService.Application.Features.Alerts.DeleteAlert;
 using Finance.AlertService.Application.Features.Alerts.GetUserAlerts;
-using Finance.AlertService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
