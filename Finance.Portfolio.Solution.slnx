@@ -40,6 +40,7 @@
   </Folder>
   <Folder Name="/shared/">
     <Project Path="shared/Finance.Contracts/Finance.Contracts.csproj" />
+    <Project Path="shared/Finance.Integrations.MarketAux/Finance.Integrations.MarketAux.csproj" />
     <Project Path="shared/Finance.SharedKernel.Auth/Finance.SharedKernel.Auth.csproj" />
     <Project Path="shared/Finance.SharedKernel.Logging/Finance.SharedKernel.Logging.csproj" />
     <Project Path="shared/Finance.SharedKernel.Messaging/Finance.SharedKernel.Messaging.csproj" />

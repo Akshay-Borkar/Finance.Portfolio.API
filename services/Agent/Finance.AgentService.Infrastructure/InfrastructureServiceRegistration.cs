@@ -4,6 +4,7 @@ using Finance.AgentService.Infrastructure.Consumers;
 using Finance.AgentService.Infrastructure.Orchestration;
 using Finance.AgentService.Infrastructure.Settings;
 using Finance.Contracts.Events;
+using Finance.Integrations.MarketAux;
 using Finance.SharedKernel.Messaging;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,7 @@ public static class InfrastructureServiceRegistration
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<IMarketAuxClient, MarketAuxClient>();
+        services.AddMarketAuxNews(configuration);
         services.AddHttpClient<ISentimentApiClient, SentimentApiClient>();
 
         services.Configure<AzureAISettings>(configuration.GetSection(AgentConstants.Config.AzureOpenAISection));
@@ -34,9 +35,9 @@ public static class InfrastructureServiceRegistration
 
             return new AgentCache(
                 aiSettings,
-                sp.GetRequiredService<IMarketAuxClient>(),
+                sp.GetRequiredService<IMarketAuxNewsClient>(),
                 sp.GetRequiredService<ISentimentApiClient>(),
-                sp.GetRequiredService<ILogger<AgentCache>>());
+                sp.GetRequiredService<ILoggerFactory>());
         });
 
         services.AddScoped<IPortfolioReviewOrchestrator, PortfolioReviewOrchestrator>();

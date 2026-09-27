@@ -1,0 +1,128 @@
+<Project>
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Fail the build on a project that declares its own Version, so versions cannot start
+         drifting again. Before this file existed, Microsoft.AspNetCore.OpenApi sat at both
+         10.0.6 and 10.0.10, System.IdentityModel.Tokens.Jwt at both 8.9.0 and 8.22.0 (which
+         broke the Identity test build outright), and two Microsoft.SemanticKernel.Agents.Core
+         pins named versions that do not exist on nuget.org. -->
+    <CentralPackageVersionOverrideEnabled>false</CentralPackageVersionOverrideEnabled>
+  </PropertyGroup>
+
+  <!-- ── Messaging ───────────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="MassTransit" Version="8.3.6" />
+    <PackageVersion Include="MassTransit.Azure.ServiceBus.Core" Version="8.3.6" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.3.6" />
+  </ItemGroup>
+
+  <!-- ── Persistence ─────────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.41" />
+  </ItemGroup>
+
+  <!-- ── Web / API surface ───────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="10.0.6" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.15" />
+    <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+    <PackageVersion Include="Grpc.Net.ClientFactory" Version="2.67.0" />
+  </ItemGroup>
+
+  <!-- ── Auth ────────────────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.22.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+  </ItemGroup>
+
+  <!-- ── Application patterns ────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- ── Background jobs ────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.17" />
+    <PackageVersion Include="Hangfire.Core" Version="1.8.17" />
+    <!-- Both storage backends are intentional: MarketData picks Redis when a connection string
+         resolves and falls back to in-memory otherwise. -->
+    <PackageVersion Include="Hangfire.InMemory" Version="1.0.0" />
+    <PackageVersion Include="Hangfire.Redis.StackExchange" Version="1.9.4" />
+  </ItemGroup>
+
+  <!-- ── AI / ML ─────────────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <!-- 1.71.0 is the lowest version clearing GHSA-2ww3-72rp-wpp4 (critical), which affects
+         Microsoft.SemanticKernel.Core through 1.70.0. Deliberately not 1.80.x: that removes
+         AgentGroupChat, TerminationStrategy and ITextEmbeddingGenerationService, all still used
+         by the Agent orchestration and the Portfolio document pipeline. There are no tests on
+         either AI path and no Azure OpenAI credentials configured, so that migration cannot be
+         verified here — treat it as its own task. The CS0618 warnings it emits are left
+         unsuppressed on purpose; they are the checklist for it. -->
+    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.71.0" />
+    <PackageVersion Include="Microsoft.SemanticKernel.Agents.Core" Version="1.71.0" />
+    <PackageVersion Include="Azure.Search.Documents" Version="12.0.0" />
+    <PackageVersion Include="Microsoft.ML" Version="3.0.1" />
+    <PackageVersion Include="Microsoft.ML.FastTree" Version="3.0.1" />
+    <PackageVersion Include="PdfPig" Version="0.1.14" />
+  </ItemGroup>
+
+  <!-- ── Observability ───────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.Span" Version="3.1.0" />
+    <PackageVersion Include="Serilog.Formatting.Compact" Version="3.0.0" />
+    <PackageVersion Include="Serilog.Sinks.ApplicationInsights" Version="5.0.1" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0" />
+    <PackageVersion Include="Azure.Monitor.OpenTelemetry.AspNetCore" Version="1.6.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.17.0-beta.1" />
+  </ItemGroup>
+
+  <!-- ── Third-party services ───────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="SendGrid" Version="9.29.3" />
+  </ItemGroup>
+
+  <!-- ── Security pins ──────────────────────────────────────────────────────────────────── -->
+  <!-- None of these are used directly. Each overrides a vulnerable version that arrives
+       transitively, pinned to the newest release inside the same major so the resolved graph is
+       patched without crossing a breaking boundary. Remove a pin only once the package that
+       pulls it in has itself moved past the advisory. -->
+  <ItemGroup>
+    <!-- Overrides 9.0.0 from Microsoft.Data.SqlClient (7 high-severity advisories). -->
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.12" />
+    <!-- Overrides 2.0.0 from Microsoft.AspNetCore.OpenApi 10.0.x. Verified at runtime, not just
+         at compile time: GET /openapi/v1.json returns 200 with a valid OpenAPI 3.1.1 document. -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
+    <!-- Overrides 2.5.187 from the SignalR Redis backplane (one high, eight moderate). Same
+         2.5.x line, so the wire format is unchanged. -->
+    <PackageVersion Include="MessagePack" Version="2.5.305" />
+  </ItemGroup>
+
+  <!-- ── Test stack ──────────────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Reqnroll.xUnit" Version="2.4.1" />
+    <PackageVersion Include="Reqnroll.Tools.MsBuild.Generation" Version="2.4.1" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="FluentAssertions" Version="6.12.2" />
+  </ItemGroup>
+
+</Project>

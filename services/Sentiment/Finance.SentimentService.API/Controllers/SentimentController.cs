@@ -1,3 +1,4 @@
+using Finance.Integrations.MarketAux;
 using Finance.SentimentService.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +11,20 @@ namespace Finance.SentimentService.API.Controllers;
 public class SentimentController : ControllerBase
 {
     private readonly ISentimentAnalysisService _sentimentService;
-    private readonly IMarketAuxService _marketAuxService;
+    private readonly IMarketAuxNewsClient _marketAuxNews;
 
     public SentimentController(
         ISentimentAnalysisService sentimentService,
-        IMarketAuxService marketAuxService)
+        IMarketAuxNewsClient marketAuxNews)
     {
         _sentimentService = sentimentService;
-        _marketAuxService = marketAuxService;
+        _marketAuxNews = marketAuxNews;
     }
 
     [HttpGet("analyze/{ticker}")]
     public async Task<IActionResult> AnalyzeStockNews(string ticker, CancellationToken cancellationToken)
     {
-        var articles = await _marketAuxService.FetchLatestStockNews(ticker, cancellationToken);
+        var articles = await _marketAuxNews.GetHeadlinesAsync(ticker, cancellationToken);
 
         var results = articles.Select(article => new
         {

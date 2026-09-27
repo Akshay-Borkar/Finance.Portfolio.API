@@ -8,11 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-    <!-- Direct pin: Microsoft.AspNetCore.OpenApi 10.0.x resolves Microsoft.OpenApi 2.0.0, which
-         has a high-severity advisory. 2.12.2 is the newest within the same major. -->
-    <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.16.15" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>
