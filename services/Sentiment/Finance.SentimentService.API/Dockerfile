@@ -6,6 +6,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
+COPY shared/Finance.SharedKernel.Logging/ shared/Finance.SharedKernel.Logging/
+COPY shared/Finance.SharedKernel.Telemetry/ shared/Finance.SharedKernel.Telemetry/
 COPY services/Sentiment/ services/Sentiment/
 
 WORKDIR /src/services/Sentiment/Finance.SentimentService.API

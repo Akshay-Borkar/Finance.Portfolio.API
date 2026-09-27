@@ -5,15 +5,16 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
+COPY shared/Finance.Contracts/ shared/Finance.Contracts/
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
 COPY shared/Finance.SharedKernel.Logging/ shared/Finance.SharedKernel.Logging/
 COPY shared/Finance.SharedKernel.Telemetry/ shared/Finance.SharedKernel.Telemetry/
-COPY services/Gateway/Finance.Gateway/ services/Gateway/Finance.Gateway/
+COPY services/Agent/ services/Agent/
 
-WORKDIR /src/services/Gateway/Finance.Gateway
-RUN dotnet publish Finance.Gateway.csproj -c Release -o /app/publish
+WORKDIR /src/services/Agent/Finance.AgentService.API
+RUN dotnet publish Finance.AgentService.API.csproj -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "Finance.Gateway.dll"]
+ENTRYPOINT ["dotnet", "Finance.AgentService.API.dll"]

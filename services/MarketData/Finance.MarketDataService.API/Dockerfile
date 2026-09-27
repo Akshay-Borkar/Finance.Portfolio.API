@@ -8,6 +8,8 @@ WORKDIR /src
 
 COPY shared/Finance.Contracts/ shared/Finance.Contracts/
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
+COPY shared/Finance.SharedKernel.Logging/ shared/Finance.SharedKernel.Logging/
+COPY shared/Finance.SharedKernel.Telemetry/ shared/Finance.SharedKernel.Telemetry/
 COPY services/MarketData/ services/MarketData/
 
 WORKDIR /src/services/MarketData/Finance.MarketDataService.API
