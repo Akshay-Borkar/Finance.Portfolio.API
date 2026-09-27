@@ -3,7 +3,6 @@ using Finance.AlertService.Application.Features.Alerts.CreateAlert;
 using Finance.AlertService.Application.Entities;
 using Finance.AlertService.Tests.Support;
 using FluentAssertions;
-using FluentValidation.Results;
 using Moq;
 using Reqnroll;
 

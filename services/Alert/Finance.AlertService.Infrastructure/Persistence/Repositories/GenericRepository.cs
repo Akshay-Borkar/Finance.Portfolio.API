@@ -1,6 +1,5 @@
 using Finance.AlertService.Application.Contracts.Persistence;
 using Finance.AlertService.Application.Common;
-using Finance.AlertService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Finance.AlertService.Infrastructure.Persistence.Repositories;

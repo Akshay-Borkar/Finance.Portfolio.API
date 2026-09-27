@@ -19,8 +19,8 @@ public static class ServiceRegistration
     /// </summary>
     /// <remarks>
     /// Deliberately not named <c>AddIdentityCore</c>: ASP.NET Identity already ships an
-    /// <see cref="IdentityServiceCollectionExtensions"/> extension by that exact name, and having
-    /// both in scope here would be an ambiguous-call trap at every call site.
+    /// extension method with that exact name on <c>IServiceCollection</c>, and having both in
+    /// scope here would be an ambiguous-call trap at every call site.
     /// </remarks>
     public static IServiceCollection AddIdentityServices(
         this IServiceCollection services,

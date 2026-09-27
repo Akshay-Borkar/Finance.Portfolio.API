@@ -12,6 +12,8 @@ public static class MessagingExtensions
     /// otherwise Azure Service Bus (staging/prod). Both branches stay wired so switching targets
     /// is a config change, not a code change.
     /// </summary>
+    /// <param name="services">The service collection to register the bus on.</param>
+    /// <param name="configuration">Supplies RabbitMq:Host and ServiceBusConnectionString.</param>
     /// <param name="configureBus">
     /// Consumer registrations and any other bus-level setup, e.g. <c>x => x.AddConsumer&lt;FooConsumer&gt;()</c>.
     /// </param>

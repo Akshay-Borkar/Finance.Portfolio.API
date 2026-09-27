@@ -5,7 +5,6 @@ using Finance.AlertService.Infrastructure.Persistence;
 using Finance.AlertService.Infrastructure.Persistence.Repositories;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Messaging;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

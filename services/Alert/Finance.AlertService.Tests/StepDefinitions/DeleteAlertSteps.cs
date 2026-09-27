@@ -2,7 +2,6 @@ using Finance.AlertService.Application.Contracts.Persistence;
 using Finance.AlertService.Application.Features.Alerts.DeleteAlert;
 using Finance.AlertService.Application.Entities;
 using Finance.AlertService.Tests.Support;
-using FluentAssertions;
 using Moq;
 using Reqnroll;
 
