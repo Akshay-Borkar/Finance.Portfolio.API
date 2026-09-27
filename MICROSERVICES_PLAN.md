@@ -65,10 +65,7 @@ Finance.Portfolio.Solution/
 │   └── Finance.SharedKernel.Auth/          ← Shared JWT AddAuthentication extension
 ├── services/
 │   ├── Identity/
-│   │   ├── Finance.IdentityService.Domain/
-│   │   ├── Finance.IdentityService.Application/
-│   │   ├── Finance.IdentityService.Persistence/
-│   │   ├── Finance.IdentityService.Infrastructure/
+│   │   ├── Finance.IdentityService.Core/
 │   │   └── Finance.IdentityService.API/
 │   ├── Portfolio/
 │   │   ├── Finance.PortfolioService.Domain/
@@ -217,6 +214,15 @@ Location: `services/Gateway/Finance.Gateway/`
 
 # PHASE 2 — Identity Service
 **Duration: Days 2–3**
+
+> **Superseded 2026-09-27 — structure consolidated.** The five projects below were merged into
+> `Finance.IdentityService.Core` + `Finance.IdentityService.API`. The layer split bought nothing
+> here: `ApplicationUser` derives from `IdentityUser` and the services take `UserManager`/
+> `SignInManager` directly, so ASP.NET Identity *is* the model and there was no framework-free
+> layer to isolate. The dependency arrows were already circular (`Persistence` → `Application`,
+> `Infrastructure` → `Persistence`), and the tests construct `AuthService` concretely rather than
+> through `IAuthService`, so nothing depended on the seam either. The checklist below is kept as
+> the historical record of how the service was originally extracted.
 
 ### Goal
 Extract auth into its own service. The monolith's `AuthController` stays alive as fallback until gateway is switched.

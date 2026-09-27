@@ -12,10 +12,8 @@
   </Folder>
   <Folder Name="/services/Identity/">
     <Project Path="services/Identity/Finance.IdentityService.API/Finance.IdentityService.API.csproj" />
-    <Project Path="services/Identity/Finance.IdentityService.Application/Finance.IdentityService.Application.csproj" />
-    <Project Path="services/Identity/Finance.IdentityService.Domain/Finance.IdentityService.Domain.csproj" />
-    <Project Path="services/Identity/Finance.IdentityService.Infrastructure/Finance.IdentityService.Infrastructure.csproj" />
-    <Project Path="services/Identity/Finance.IdentityService.Persistence/Finance.IdentityService.Persistence.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Core/Finance.IdentityService.Core.csproj" />
+    <Project Path="services/Identity/Finance.IdentityService.Tests/Finance.IdentityService.Tests.csproj" />
   </Folder>
   <Folder Name="/services/MarketData/">
     <Project Path="services/MarketData/Finance.MarketDataService.API/Finance.MarketDataService.API.csproj" />

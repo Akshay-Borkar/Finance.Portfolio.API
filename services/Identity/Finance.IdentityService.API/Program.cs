@@ -1,8 +1,7 @@
 using Finance.SharedKernel.Auth.Middleware;
-using Finance.IdentityService.Infrastructure;
-using Finance.IdentityService.Infrastructure.Constants;
-using Finance.IdentityService.Persistence;
-using Finance.IdentityService.Persistence.DbContext;
+using Finance.IdentityService.Core;
+using Finance.IdentityService.Core.Constants;
+using Finance.IdentityService.Core.Persistence;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
@@ -15,8 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddSharedLogging(IdentityConstants.ServiceName);
 builder.AddSharedTelemetry(IdentityConstants.ServiceName);
 
-builder.Services.AddIdentityPersistence(builder.Configuration);
-builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();

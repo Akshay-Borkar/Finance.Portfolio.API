@@ -1,5 +1,5 @@
-using Finance.IdentityService.Application.Contracts;
-using Finance.IdentityService.Application.Models;
+using Finance.IdentityService.Core.Services;
+using Finance.IdentityService.Core.Models;
 using Finance.SharedKernel.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

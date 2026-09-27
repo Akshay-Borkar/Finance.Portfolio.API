@@ -49,6 +49,9 @@ services:
       - "8081:80"
     environment:
       ACCEPT_EULA: "Y"
+      # Seq refuses to start without this; it seeds the admin login on first run only
+      # (later changes must be made in the UI, not here).
+      SEQ_FIRSTRUN_ADMINPASSWORD: "${SEQ_ADMIN_PASSWORD}"
     volumes:
       - seqdata:/data
 

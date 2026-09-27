@@ -1,7 +1,7 @@
 using Finance.SharedKernel.Auth.Exceptions;
-using Finance.IdentityService.Application.Models;
-using Finance.IdentityService.Domain;
-using Finance.IdentityService.Infrastructure.Services;
+using Finance.IdentityService.Core.Models;
+using Finance.IdentityService.Core.Entities;
+using Finance.IdentityService.Core.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -42,8 +42,12 @@ public class AuthenticationSteps
             _userManager.Object, contextAccessor.Object, claimsFactory.Object, null!, null!, null!, null!);
     }
 
+    // The real JwtTokenFactory, not a mock: the token-claim scenarios below decode the JWT that
+    // comes back, and the GetClaimsAsync/GetRolesAsync setups above are what feed it.
     private AuthService BuildService() =>
-        new(_userManager.Object, _signInManager.Object, Options.Create(_jwtSettings));
+        new(_userManager.Object,
+            _signInManager.Object,
+            new JwtTokenFactory(_userManager.Object, Options.Create(_jwtSettings)));
 
     [Given(@"a registered user with username ""(.*)"" and email ""(.*)""")]
     public void GivenRegisteredUser(string username, string email)

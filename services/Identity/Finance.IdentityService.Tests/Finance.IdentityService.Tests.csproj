@@ -20,14 +20,14 @@
     <PackageReference Include="FluentAssertions" Version="6.12.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.9.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+    <!-- Must track the versions Finance.IdentityService.Core resolves, or NuGet fails the
+         build with NU1605 (package downgrade) instead of just warning. -->
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.22.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Finance.IdentityService.Application\Finance.IdentityService.Application.csproj" />
-    <ProjectReference Include="..\Finance.IdentityService.Domain\Finance.IdentityService.Domain.csproj" />
-    <ProjectReference Include="..\Finance.IdentityService.Infrastructure\Finance.IdentityService.Infrastructure.csproj" />
+    <ProjectReference Include="..\Finance.IdentityService.Core\Finance.IdentityService.Core.csproj" />
   </ItemGroup>
 
 </Project>

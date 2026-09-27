@@ -89,7 +89,7 @@ ng serve    # proxies /api and /hubs to http://localhost:5000
 
 ```bash
 # Identity
-dotnet ef database update --project services/Identity/Finance.IdentityService.Persistence \
+dotnet ef database update --project services/Identity/Finance.IdentityService.Core \
   --startup-project services/Identity/Finance.IdentityService.API
 
 # Portfolio
@@ -108,11 +108,13 @@ dotnet ef database update --project services/Alert/Finance.AlertService.Persiste
 ```
 Finance.Portfolio.API/
 ├── shared/
-│   ├── Finance.Contracts/           # MassTransit event records
-│   └── Finance.SharedKernel.Auth/   # Shared JWT validation extension
+│   ├── Finance.Contracts/              # MassTransit event records
+│   ├── Finance.SharedKernel.Auth/      # Shared JWT validation extension
+│   ├── Finance.SharedKernel.Logging/   # Serilog sinks + correlation-id plumbing
+│   └── Finance.SharedKernel.Telemetry/ # OpenTelemetry / Azure Monitor wiring
 ├── services/
 │   ├── Gateway/                     # YARP reverse proxy
-│   ├── Identity/                    # Auth — 5 projects (Clean Architecture)
+│   ├── Identity/                    # Auth — 2 projects (API + Core)
 │   ├── Portfolio/                   # Portfolio — 5 projects
 │   ├── MarketData/                  # Market data — 3 projects
 │   ├── Alert/                       # Alerts — 4 projects

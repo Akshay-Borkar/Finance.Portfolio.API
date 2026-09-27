@@ -37,6 +37,9 @@ services:
       - "8081:80"
     environment:
       ACCEPT_EULA: "Y"
+      # Seq refuses to start without either an admin password or this opt-out.
+      # Local-only instance, so skip the login entirely.
+      SEQ_FIRSTRUN_NOAUTHENTICATION: "True"
     volumes:
       - seqdata-dev:/data
 
