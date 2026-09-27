@@ -1,4 +1,4 @@
-using Finance.AlertService.Domain.Entities;
+using Finance.AlertService.Application.Entities;
 
 namespace Finance.AlertService.Application.Contracts.Persistence;
 

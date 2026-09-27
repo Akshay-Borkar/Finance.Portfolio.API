@@ -1,7 +1,7 @@
 using Finance.Contracts.Events;
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.SharedKernel.Auth.Exceptions;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using MassTransit;
 using MediatR;
 

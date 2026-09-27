@@ -1,4 +1,4 @@
-namespace Finance.AlertService.Domain.Common;
+namespace Finance.AlertService.Application.Common;
 
 public abstract class BaseEntity
 {

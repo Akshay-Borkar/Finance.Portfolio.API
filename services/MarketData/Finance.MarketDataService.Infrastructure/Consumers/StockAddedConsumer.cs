@@ -1,5 +1,5 @@
 using Finance.Contracts.Events;
-using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Redis;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 

@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.AlertService.Application\Finance.AlertService.Application.csproj" />
-    <ProjectReference Include="..\Finance.AlertService.Domain\Finance.AlertService.Domain.csproj" />
     <ProjectReference Include="..\Finance.AlertService.Infrastructure\Finance.AlertService.Infrastructure.csproj" />
   </ItemGroup>
 

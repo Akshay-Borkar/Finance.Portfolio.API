@@ -1,5 +1,4 @@
-using Finance.MarketDataService.Application.Contracts;
-using Finance.MarketDataService.Application.Models;
+using Finance.MarketDataService.Infrastructure.Models;
 using Newtonsoft.Json;
 
 namespace Finance.MarketDataService.Infrastructure.Services;

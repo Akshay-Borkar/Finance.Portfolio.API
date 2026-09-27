@@ -1,4 +1,4 @@
-namespace Finance.MarketDataService.Application.Contracts;
+namespace Finance.MarketDataService.Infrastructure.Redis;
 
 public interface IRedisCacheService
 {

@@ -1,4 +1,3 @@
-using Finance.MarketDataService.Application.Contracts;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Finance.MarketDataService.Infrastructure.Redis;

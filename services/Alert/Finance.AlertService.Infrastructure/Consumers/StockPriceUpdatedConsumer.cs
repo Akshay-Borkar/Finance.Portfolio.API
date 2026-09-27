@@ -1,5 +1,5 @@
 using Finance.AlertService.Application.Contracts.Persistence;
-using Finance.AlertService.Domain.Entities;
+using Finance.AlertService.Application.Entities;
 using Finance.AlertService.Infrastructure.Constants;
 using Finance.Contracts.Events;
 using MassTransit;

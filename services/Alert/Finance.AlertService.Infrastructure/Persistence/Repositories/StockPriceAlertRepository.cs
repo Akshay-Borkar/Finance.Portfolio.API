@@ -1,9 +1,9 @@
 using Finance.AlertService.Application.Contracts.Persistence;
-using Finance.AlertService.Domain.Entities;
-using Finance.AlertService.Persistence.DatabaseContext;
+using Finance.AlertService.Application.Entities;
+using Finance.AlertService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Finance.AlertService.Persistence.Repositories;
+namespace Finance.AlertService.Infrastructure.Persistence.Repositories;
 
 public class StockPriceAlertRepository : GenericRepository<StockPriceAlert>, IStockPriceAlertRepository
 {

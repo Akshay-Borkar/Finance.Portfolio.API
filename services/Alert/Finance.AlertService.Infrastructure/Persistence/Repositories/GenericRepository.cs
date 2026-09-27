@@ -1,9 +1,9 @@
 using Finance.AlertService.Application.Contracts.Persistence;
-using Finance.AlertService.Domain.Common;
-using Finance.AlertService.Persistence.DatabaseContext;
+using Finance.AlertService.Application.Common;
+using Finance.AlertService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Finance.AlertService.Persistence.Repositories;
+namespace Finance.AlertService.Infrastructure.Persistence.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {

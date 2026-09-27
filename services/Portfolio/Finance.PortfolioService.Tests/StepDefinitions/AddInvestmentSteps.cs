@@ -1,6 +1,6 @@
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.AddInvestment;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using Finance.PortfolioService.Tests.Support;
 using FluentAssertions;
 using Moq;

@@ -3,9 +3,8 @@
   <Folder Name="/services/Alert/">
     <Project Path="services/Alert/Finance.AlertService.API/Finance.AlertService.API.csproj" />
     <Project Path="services/Alert/Finance.AlertService.Application/Finance.AlertService.Application.csproj" />
-    <Project Path="services/Alert/Finance.AlertService.Domain/Finance.AlertService.Domain.csproj" />
     <Project Path="services/Alert/Finance.AlertService.Infrastructure/Finance.AlertService.Infrastructure.csproj" />
-    <Project Path="services/Alert/Finance.AlertService.Persistence/Finance.AlertService.Persistence.csproj" />
+    <Project Path="services/Alert/Finance.AlertService.Tests/Finance.AlertService.Tests.csproj" />
   </Folder>
   <Folder Name="/services/Gateway/">
     <Project Path="services/Gateway/Finance.Gateway/Finance.Gateway.csproj" />
@@ -17,7 +16,6 @@
   </Folder>
   <Folder Name="/services/MarketData/">
     <Project Path="services/MarketData/Finance.MarketDataService.API/Finance.MarketDataService.API.csproj" />
-    <Project Path="services/MarketData/Finance.MarketDataService.Application/Finance.MarketDataService.Application.csproj" />
     <Project Path="services/MarketData/Finance.MarketDataService.Infrastructure/Finance.MarketDataService.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/services/Agent/">
@@ -32,9 +30,9 @@
   <Folder Name="/services/Portfolio/">
     <Project Path="services/Portfolio/Finance.PortfolioService.API/Finance.PortfolioService.API.csproj" />
     <Project Path="services/Portfolio/Finance.PortfolioService.Application/Finance.PortfolioService.Application.csproj" />
-    <Project Path="services/Portfolio/Finance.PortfolioService.Domain/Finance.PortfolioService.Domain.csproj" />
     <Project Path="services/Portfolio/Finance.PortfolioService.Infrastructure/Finance.PortfolioService.Infrastructure.csproj" />
     <Project Path="services/Portfolio/Finance.PortfolioService.Persistence/Finance.PortfolioService.Persistence.csproj" />
+    <Project Path="services/Portfolio/Finance.PortfolioService.Tests/Finance.PortfolioService.Tests.csproj" />
   </Folder>
   <Folder Name="/services/Sentiment/">
     <Project Path="services/Sentiment/Finance.SentimentService.API/Finance.SentimentService.API.csproj" />

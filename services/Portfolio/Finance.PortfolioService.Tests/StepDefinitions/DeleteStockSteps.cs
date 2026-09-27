@@ -2,7 +2,7 @@ using Finance.Contracts.Events;
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.SharedKernel.Auth.Exceptions;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.DeleteStock;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using Finance.PortfolioService.Tests.Support;
 using FluentAssertions;
 using MassTransit;
