@@ -22,7 +22,7 @@ public class AddInvestmentSteps
 
     public AddInvestmentSteps(PortfolioTestContext ctx) => _ctx = ctx;
 
-    [Given(@"a stock with id ""(.*)"" owned by the current user")]
+    [Given(@"a stock with id ""([^""]*)"" owned by the current user")]
     public void GivenStockOwnedByCurrentUser(string stockId)
     {
         _targetStockId = Guid.Parse(stockId);
@@ -31,14 +31,17 @@ public class AddInvestmentSteps
             .ReturnsAsync(new Stock { Id = _targetStockId, UserId = _ctx.UserId });
     }
 
-    [Given(@"no stock exists with id ""(.*)""")]
+    // Scoped: DeleteStockSteps binds the same phrase against its own IStockRepository mock.
+    // Reqnroll's binding registry is per assembly, not per feature, so both would match.
+    [Given(@"no stock exists with id ""([^""]*)""")]
+    [Scope(Feature = "Add Investment to a Stock")]
     public void GivenNoStockExists(string stockId)
     {
         _targetStockId = Guid.Parse(stockId);
         _stockRepo.Setup(r => r.GetByIdAsync(_targetStockId)).ReturnsAsync((Stock?)null);
     }
 
-    [Given(@"a stock with id ""(.*)"" owned by a different user")]
+    [Given(@"a stock with id ""([^""]*)"" owned by a different user")]
     public void GivenStockOwnedByDifferentUser(string stockId)
     {
         _targetStockId = Guid.Parse(stockId);

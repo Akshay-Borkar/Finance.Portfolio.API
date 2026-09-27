@@ -85,7 +85,11 @@ public class CreateAlertSteps
     public void ThenAlertTargetPrice(decimal price) =>
         _capturedAlert!.TargetPrice.Should().Be(price);
 
+    // Scoped: "Stock Price Updated Consumer" binds the same phrase to a different assertion
+    // (no alert in the active set was triggered). Reqnroll's binding registry is per assembly,
+    // not per feature, so the two would otherwise collide.
     [Then(@"the alert should not be triggered")]
+    [Scope(Feature = "Create Stock Price Alert")]
     public void ThenAlertNotTriggered() =>
         _capturedAlert!.IsTriggered.Should().BeFalse();
 

@@ -29,20 +29,26 @@ public class AddStockCommandHandler : IRequestHandler<AddStockCommand, Guid>
 
     public async Task<Guid> Handle(AddStockCommand request, CancellationToken cancellationToken)
     {
+        // Normalize once, then use the same form everywhere. The ticker is stored uppercase and
+        // published uppercase in StockAdded, and Market Data keys its Redis price cache by the
+        // ticker it receives verbatim -- so looking up with the raw input would fragment that
+        // cache across casings and disagree with what we store and publish.
+        var ticker = request.Ticker.ToUpperInvariant();
+
         decimal currentPrice = 0m;
         try
         {
-            currentPrice = await _marketData.GetCurrentPriceAsync(request.Ticker, cancellationToken);
+            currentPrice = await _marketData.GetCurrentPriceAsync(ticker, cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed to fetch current price for {Ticker} from Market Data service, defaulting to 0", request.Ticker);
+            _logger.LogWarning(ex, "Failed to fetch current price for {Ticker} from Market Data service, defaulting to 0", ticker);
         }
 
         var stock = new Stock
         {
             Id = Guid.NewGuid(),
-            Ticker = request.Ticker.ToUpperInvariant(),
+            Ticker = ticker,
             StockName = request.StockName,
             CurrentPrice = currentPrice,
             StockPE = request.StockPE,

@@ -24,7 +24,7 @@ public class DeleteStockSteps
 
     public DeleteStockSteps(PortfolioTestContext ctx) => _ctx = ctx;
 
-    [Given(@"a stock with id ""(.*)"" and ticker ""(.*)"" owned by the current user")]
+    [Given(@"a stock with id ""([^""]*)"" and ticker ""([^""]*)"" owned by the current user")]
     public void GivenStockOwnedByCurrentUser(string stockId, string ticker)
     {
         _targetStockId = Guid.Parse(stockId);
@@ -33,7 +33,7 @@ public class DeleteStockSteps
             .ReturnsAsync(new Stock { Id = _targetStockId, UserId = _ctx.UserId, Ticker = ticker });
     }
 
-    [Given(@"a stock with id ""(.*)"" and ticker ""(.*)"" owned by a different user")]
+    [Given(@"a stock with id ""([^""]*)"" and ticker ""([^""]*)"" owned by a different user")]
     public void GivenStockOwnedByDifferentUser(string stockId, string ticker)
     {
         _targetStockId = Guid.Parse(stockId);
@@ -42,7 +42,10 @@ public class DeleteStockSteps
             .ReturnsAsync(new Stock { Id = _targetStockId, UserId = Guid.NewGuid(), Ticker = ticker });
     }
 
-    [Given(@"no stock exists with id ""(.*)""")]
+    // Scoped: AddInvestmentSteps binds the same phrase against its own IStockRepository mock.
+    // See the note there.
+    [Given(@"no stock exists with id ""([^""]*)""")]
+    [Scope(Feature = "Delete Stock from Portfolio")]
     public void GivenNoStockExists(string stockId)
     {
         _targetStockId = Guid.Parse(stockId);
