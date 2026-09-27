@@ -8,7 +8,6 @@ public static class PortfolioInfrastructureConstants
         public const string DefaultGrpcAddress = "http://marketdata-svc:8081";
         public const string AzureOpenAISection = "AzureOpenAI";
         public const string AzureSearchSection = "AzureSearch";
-        public const string ServiceBusConnectionString = "ServiceBusConnectionString";
     }
 
     public static class AI

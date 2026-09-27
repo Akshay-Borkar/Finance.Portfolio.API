@@ -10,8 +10,6 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.67.0" />
-    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.3.6" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
     <PackageReference Include="Azure.Search.Documents" Version="12.0.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.45.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.32.0" />
@@ -25,7 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Finance.PortfolioService.Application\Finance.PortfolioService.Application.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Messaging\Finance.SharedKernel.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

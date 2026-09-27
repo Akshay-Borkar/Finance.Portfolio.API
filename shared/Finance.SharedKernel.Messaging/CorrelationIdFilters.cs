@@ -1,8 +1,9 @@
 using System.Diagnostics;
+using Finance.SharedKernel.Logging;
 using MassTransit;
 using LogContext = Serilog.Context.LogContext;
 
-namespace Finance.SharedKernel.Logging.Messaging;
+namespace Finance.SharedKernel.Messaging;
 
 /// <summary>
 /// Stamps the ambient correlation id (set by CorrelationIdMiddleware for HTTP-triggered work,

@@ -3,7 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Finance.MarketDataService.Application\Finance.MarketDataService.Application.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
-    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Messaging\Finance.SharedKernel.Messaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -11,8 +11,6 @@
     <PackageReference Include="Hangfire.Core" Version="1.8.17" />
     <PackageReference Include="Hangfire.InMemory" Version="1.0.0" />
     <PackageReference Include="Hangfire.Redis.StackExchange" Version="1.9.4" />
-    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.3.6" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

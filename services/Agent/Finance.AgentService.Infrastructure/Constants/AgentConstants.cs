@@ -5,7 +5,6 @@ public static class AgentConstants
     public static class ServiceBus
     {
         public const string SubscriptionName = "finance-agentservice";
-        public const string ServiceBusConnectionString = "ServiceBusConnectionString";
     }
 
     public static class Config

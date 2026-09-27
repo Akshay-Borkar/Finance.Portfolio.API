@@ -111,6 +111,7 @@ Finance.Portfolio.API/
 │   ├── Finance.Contracts/              # MassTransit event records
 │   ├── Finance.SharedKernel.Auth/      # Shared JWT validation extension
 │   ├── Finance.SharedKernel.Logging/   # Serilog sinks + correlation-id plumbing
+│   ├── Finance.SharedKernel.Messaging/ # MassTransit transport selection + correlation filters
 │   └── Finance.SharedKernel.Telemetry/ # OpenTelemetry / Azure Monitor wiring
 ├── services/
 │   ├── Gateway/                     # YARP reverse proxy

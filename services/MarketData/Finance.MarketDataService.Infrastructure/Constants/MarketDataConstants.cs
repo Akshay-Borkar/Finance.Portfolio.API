@@ -30,6 +30,5 @@ public static class MarketDataConstants
 
     public static class Config
     {
-        public const string ServiceBusConnectionString = "ServiceBusConnectionString";
     }
 }

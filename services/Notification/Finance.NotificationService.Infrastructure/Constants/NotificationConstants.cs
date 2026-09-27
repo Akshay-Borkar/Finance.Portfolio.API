@@ -23,7 +23,6 @@ public static class NotificationConstants
 
     public static class Config
     {
-        public const string ServiceBusConnectionString = "ServiceBusConnectionString";
         public const string EmailSettings = "EmailSettings";
         public const int RedisConnectTimeoutMs = 5000;
         public const int RedisSyncTimeoutMs = 5000;

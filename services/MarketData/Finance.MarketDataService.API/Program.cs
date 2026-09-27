@@ -1,9 +1,9 @@
 using Finance.MarketDataService.API.Controllers;
-using Finance.MarketDataService.API.Middleware;
 using Finance.MarketDataService.Application.Contracts;
 using Finance.MarketDataService.Infrastructure;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;
+using Finance.SharedKernel.Auth.Middleware;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
 using Finance.SharedKernel.Telemetry;
