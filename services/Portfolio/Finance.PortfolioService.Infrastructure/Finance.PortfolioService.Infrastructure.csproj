@@ -7,17 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.67.0" />
-    <PackageReference Include="Azure.Search.Documents" Version="12.0.0" />
-    <!-- 1.71.0 is the lowest version clearing GHSA-2ww3-72rp-wpp4 (critical), which affects
-         Microsoft.SemanticKernel.Core through 1.70.0. Deliberately not 1.80.x: that removes
-         AgentGroupChat/TerminationStrategy and ITextEmbeddingGenerationService, which this code
-         still uses, and there are no tests or Azure OpenAI credentials here to verify a rewrite
-         against. Treat the 1.8x migration as its own task. -->
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.71.0" />
-    <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" Version="1.71.0" />
-    <PackageReference Include="PdfPig" Version="0.1.14" />
+    <PackageReference Include="Grpc.AspNetCore" />
+    <PackageReference Include="Grpc.Net.ClientFactory" />
+    <PackageReference Include="Azure.Search.Documents" />
+    <PackageReference Include="Microsoft.SemanticKernel" />
+    <PackageReference Include="Microsoft.SemanticKernel.Agents.Core" />
+    <PackageReference Include="PdfPig" />
   </ItemGroup>
 
   <ItemGroup>
