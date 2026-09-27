@@ -24,7 +24,7 @@ public class DeleteStockSteps
 
     public DeleteStockSteps(PortfolioTestContext ctx) => _ctx = ctx;
 
-    [Given(@"a stock with id ""(.*)"" and ticker ""(.*)"" owned by the current user")]
+    [Given(@"a stock with id ""([^""]*)"" and ticker ""([^""]*)"" owned by the current user")]
     public void GivenStockOwnedByCurrentUser(string stockId, string ticker)
     {
         _targetStockId = Guid.Parse(stockId);
@@ -33,7 +33,7 @@ public class DeleteStockSteps
             .ReturnsAsync(new Stock { Id = _targetStockId, UserId = _ctx.UserId, Ticker = ticker });
     }
 
-    [Given(@"a stock with id ""(.*)"" and ticker ""(.*)"" owned by a different user")]
+    [Given(@"a stock with id ""([^""]*)"" and ticker ""([^""]*)"" owned by a different user")]
     public void GivenStockOwnedByDifferentUser(string stockId, string ticker)
     {
         _targetStockId = Guid.Parse(stockId);
@@ -42,22 +42,14 @@ public class DeleteStockSteps
             .ReturnsAsync(new Stock { Id = _targetStockId, UserId = Guid.NewGuid(), Ticker = ticker });
     }
 
-    [Given(@"no stock exists with id ""(.*)""")]
+    // Scoped: AddInvestmentSteps binds the same phrase against its own IStockRepository mock.
+    // See the note there.
+    [Given(@"no stock exists with id ""([^""]*)""")]
+    [Scope(Feature = "Delete Stock from Portfolio")]
     public void GivenNoStockExists(string stockId)
     {
         _targetStockId = Guid.Parse(stockId);
         _stockRepo.Setup(r => r.GetByIdAsync(_targetStockId)).ReturnsAsync((Stock?)null);
-    }
-
-    [Given(@"the stock has (\d+) existing investments")]
-    public void GivenStockHasInvestments(int count)
-    {
-        var investments = Enumerable.Range(0, count)
-            .Select(_ => new Investment { Id = Guid.NewGuid(), StockDetailsId = _targetStockId })
-            .ToList();
-
-        _investmentRepo.Setup(r => r.GetInvestmentsByStockId(_targetStockId)).ReturnsAsync(investments);
-        _investmentRepo.Setup(r => r.DeleteAsync(It.IsAny<Investment>())).Returns(Task.CompletedTask);
     }
 
     [When(@"I delete the stock")]
@@ -67,31 +59,28 @@ public class DeleteStockSteps
         _publisher.Setup(p => p.Publish(It.IsAny<StockRemoved>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var handler = new DeleteStockCommandHandler(_stockRepo.Object, _investmentRepo.Object, _publisher.Object);
+        var handler = new DeleteStockCommandHandler(_stockRepo.Object, _publisher.Object);
         await handler.Handle(new DeleteStockCommand(_targetStockId, _ctx.UserId), CancellationToken.None);
     }
 
     [When(@"I try to delete that stock")]
     public async Task WhenITryToDeleteThatStock()
     {
-        _investmentRepo.Setup(r => r.GetInvestmentsByStockId(It.IsAny<Guid>())).ReturnsAsync([]);
-        var handler = new DeleteStockCommandHandler(_stockRepo.Object, _investmentRepo.Object, _publisher.Object);
+        var handler = new DeleteStockCommandHandler(_stockRepo.Object, _publisher.Object);
         try { await handler.Handle(new DeleteStockCommand(_targetStockId, _ctx.UserId), CancellationToken.None); }
         catch (Exception ex) { _thrownException = ex; }
     }
 
-    [Then(@"all (\d+) investments should be deleted")]
-    public void ThenAllInvestmentsDeleted(int count) =>
-        _investmentRepo.Verify(r => r.DeleteAsync(It.IsAny<Investment>()), Times.Exactly(count));
-
-    [Then(@"no investments should be deleted")]
-    public void ThenNoInvestmentsDeleted() =>
-        _investmentRepo.Verify(r => r.DeleteAsync(It.IsAny<Investment>()), Times.Never);
-
-    [Then(@"the stock itself should be deleted")]
-    public void ThenStockDeleted() =>
+    [Then(@"the stock should be deleted exactly once")]
+    public void ThenStockDeletedOnce() =>
         _stockRepo.Verify(r => r.DeleteAsync(It.IsAny<Stock>()), Times.Once);
 
+    // Regression guard for the N+1 transaction bug. The handler must not enumerate or delete
+    // investments itself -- the cascade on Investments.StockDetailsId removes them inside the
+    // same delete, so any call here means the per-investment loop has come back.
+    [Then(@"the investment repository should not be used at all")]
+    public void ThenInvestmentRepositoryUnused() =>
+        _investmentRepo.VerifyNoOtherCalls();
     [Then(@"a StockRemoved event should be published for ticker ""(.*)""")]
     public void ThenStockRemovedPublished(string ticker) =>
         _publisher.Verify(p => p.Publish(

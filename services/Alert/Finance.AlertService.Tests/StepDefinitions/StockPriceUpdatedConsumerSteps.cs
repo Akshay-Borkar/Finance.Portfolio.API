@@ -65,7 +65,10 @@ public class StockPriceUpdatedConsumerSteps
     public void ThenAlertTriggered() =>
         _activeAlerts.Should().Contain(a => a.IsTriggered);
 
+    // Scoped: "Create Stock Price Alert" binds the same phrase to a different assertion
+    // (the newly created alert is not yet triggered). See the note there.
     [Then(@"the alert should not be triggered")]
+    [Scope(Feature = "Stock Price Updated Consumer - Alert Triggering")]
     public void ThenAlertNotTriggered() =>
         _activeAlerts.Should().NotContain(a => a.IsTriggered);
 

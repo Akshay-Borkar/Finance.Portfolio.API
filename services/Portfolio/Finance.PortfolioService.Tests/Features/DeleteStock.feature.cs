@@ -24,8 +24,14 @@ namespace Finance.PortfolioService.Tests.Features
         
         private static string[] featureTags = ((string[])(null));
         
-        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("en-US"), "Features", "Delete Stock from Portfolio", "  As a portfolio owner\r\n  I want to delete a stock from my portfolio\r\n  So that s" +
-                "tocks I no longer hold are removed along with their investment history", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("en-US"), "Features", "Delete Stock from Portfolio", @"  As a portfolio owner
+  I want to delete a stock from my portfolio
+  So that stocks I no longer hold are removed along with their investment history
+
+  The investment rows go with the stock through the ON DELETE CASCADE on
+  Investments.StockDetailsId, so this is a single atomic delete. It used to be a loop that
+  called the repository once per investment, and since every repository mutator commits on
+  its own that ran N+1 separate transactions.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
@@ -105,9 +111,9 @@ namespace Finance.PortfolioService.Tests.Features
         
         public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
         {
-#line 6
+#line 11
   #line hidden
-#line 7
+#line 12
     await testRunner.GivenAsync("a user with id \"11111111-1111-1111-1111-111111111111\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
         }
@@ -137,15 +143,15 @@ namespace Finance.PortfolioService.Tests.Features
             await this.TestTearDownAsync();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Successfully delete a stock with existing investments")]
+        [Xunit.SkippableFactAttribute(DisplayName="Successfully delete a stock")]
         [Xunit.TraitAttribute("FeatureTitle", "Delete Stock from Portfolio")]
-        [Xunit.TraitAttribute("Description", "Successfully delete a stock with existing investments")]
-        public async global::System.Threading.Tasks.Task SuccessfullyDeleteAStockWithExistingInvestments()
+        [Xunit.TraitAttribute("Description", "Successfully delete a stock")]
+        public async global::System.Threading.Tasks.Task SuccessfullyDeleteAStock()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Successfully delete a stock with existing investments", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 9
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Successfully delete a stock", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 14
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -155,41 +161,35 @@ namespace Finance.PortfolioService.Tests.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 6
+#line 11
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 10
+#line 15
     await testRunner.GivenAsync("a stock with id \"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\" and ticker \"AAPL\" owned by" +
                         " the current user", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 11
-    await testRunner.AndAsync("the stock has 2 existing investments", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 12
+#line 16
     await testRunner.WhenAsync("I delete the stock", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 13
-    await testRunner.ThenAsync("all 2 investments should be deleted", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 17
+    await testRunner.ThenAsync("the stock should be deleted exactly once", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 14
-    await testRunner.AndAsync("the stock itself should be deleted", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 15
+#line 18
     await testRunner.AndAsync("a StockRemoved event should be published for ticker \"AAPL\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [Xunit.SkippableFactAttribute(DisplayName="Successfully delete a stock with no investments")]
+        [Xunit.SkippableFactAttribute(DisplayName="Deleting a stock does not issue per-investment deletes")]
         [Xunit.TraitAttribute("FeatureTitle", "Delete Stock from Portfolio")]
-        [Xunit.TraitAttribute("Description", "Successfully delete a stock with no investments")]
-        public async global::System.Threading.Tasks.Task SuccessfullyDeleteAStockWithNoInvestments()
+        [Xunit.TraitAttribute("Description", "Deleting a stock does not issue per-investment deletes")]
+        public async global::System.Threading.Tasks.Task DeletingAStockDoesNotIssuePer_InvestmentDeletes()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Successfully delete a stock with no investments", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 17
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting a stock does not issue per-investment deletes", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 20
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -199,27 +199,21 @@ namespace Finance.PortfolioService.Tests.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 6
+#line 11
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 18
+#line 21
     await testRunner.GivenAsync("a stock with id \"bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb\" and ticker \"META\" owned by" +
                         " the current user", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 19
-    await testRunner.AndAsync("the stock has 0 existing investments", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 20
+#line 22
     await testRunner.WhenAsync("I delete the stock", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 21
-    await testRunner.ThenAsync("no investments should be deleted", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 22
-    await testRunner.AndAsync("the stock itself should be deleted", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
 #line 23
-    await testRunner.AndAsync("a StockRemoved event should be published for ticker \"META\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.ThenAsync("the stock should be deleted exactly once", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 24
+    await testRunner.AndAsync("the investment repository should not be used at all", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -233,7 +227,7 @@ namespace Finance.PortfolioService.Tests.Features
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Cannot delete a stock that does not exist", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 25
+#line 26
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -243,16 +237,16 @@ namespace Finance.PortfolioService.Tests.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 6
+#line 11
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 26
+#line 27
     await testRunner.GivenAsync("no stock exists with id \"cccccccc-cccc-cccc-cccc-cccccccccccc\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 27
+#line 28
     await testRunner.WhenAsync("I try to delete that stock", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 28
+#line 29
     await testRunner.ThenAsync("a not found error should be raised", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -267,7 +261,7 @@ namespace Finance.PortfolioService.Tests.Features
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Cannot delete a stock owned by another user", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 30
+#line 31
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -277,17 +271,17 @@ namespace Finance.PortfolioService.Tests.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 6
+#line 11
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 31
+#line 32
     await testRunner.GivenAsync("a stock with id \"dddddddd-dddd-dddd-dddd-dddddddddddd\" and ticker \"GOOG\" owned by" +
                         " a different user", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 32
+#line 33
     await testRunner.WhenAsync("I try to delete that stock", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 33
+#line 34
     await testRunner.ThenAsync("a bad request error should be raised with message \"permission\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

@@ -3,24 +3,25 @@ Feature: Delete Stock from Portfolio
   I want to delete a stock from my portfolio
   So that stocks I no longer hold are removed along with their investment history
 
+  The investment rows go with the stock through the ON DELETE CASCADE on
+  Investments.StockDetailsId, so this is a single atomic delete. It used to be a loop that
+  called the repository once per investment, and since every repository mutator commits on
+  its own that ran N+1 separate transactions.
+
   Background:
     Given a user with id "11111111-1111-1111-1111-111111111111"
 
-  Scenario: Successfully delete a stock with existing investments
+  Scenario: Successfully delete a stock
     Given a stock with id "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa" and ticker "AAPL" owned by the current user
-    And the stock has 2 existing investments
     When I delete the stock
-    Then all 2 investments should be deleted
-    And the stock itself should be deleted
+    Then the stock should be deleted exactly once
     And a StockRemoved event should be published for ticker "AAPL"
 
-  Scenario: Successfully delete a stock with no investments
+  Scenario: Deleting a stock does not issue per-investment deletes
     Given a stock with id "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" and ticker "META" owned by the current user
-    And the stock has 0 existing investments
     When I delete the stock
-    Then no investments should be deleted
-    And the stock itself should be deleted
-    And a StockRemoved event should be published for ticker "META"
+    Then the stock should be deleted exactly once
+    And the investment repository should not be used at all
 
   Scenario: Cannot delete a stock that does not exist
     Given no stock exists with id "cccccccc-cccc-cccc-cccc-cccccccccccc"
