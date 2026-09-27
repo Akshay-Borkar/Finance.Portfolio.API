@@ -3,6 +3,7 @@
 using Finance.AgentService.Infrastructure.Clients;
 using Finance.AgentService.Infrastructure.Plugins;
 using Finance.AgentService.Infrastructure.Settings;
+using Finance.Integrations.MarketAux;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Agents;
@@ -18,22 +19,24 @@ public interface IAgentCache
 public sealed class AgentCache : IAgentCache, IAsyncDisposable
 {
     private readonly AzureAISettings _settings;
-    private readonly IMarketAuxClient _marketAux;
+    private readonly IMarketAuxNewsClient _marketAux;
     private readonly ISentimentApiClient _sentiment;
     private readonly ILogger<AgentCache> _logger;
+    private readonly ILoggerFactory _loggerFactory;
     private volatile CachedAgents? _cached;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
     public AgentCache(
         AzureAISettings settings,
-        IMarketAuxClient marketAux,
+        IMarketAuxNewsClient marketAux,
         ISentimentApiClient sentiment,
-        ILogger<AgentCache> logger)
+        ILoggerFactory loggerFactory)
     {
         _settings = settings;
         _marketAux = marketAux;
         _sentiment = sentiment;
-        _logger = logger;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<AgentCache>();
     }
 
     public async Task<CachedAgents> GetOrCreateAsync(CancellationToken ct = default)
@@ -52,7 +55,7 @@ public sealed class AgentCache : IAgentCache, IAsyncDisposable
 
             _cached = new CachedAgents(
                 BuildAgent(AgentNames.News, PortfolioReviewOrchestrator.NewsAgentInstructions, autoInvoke,
-                    KernelPluginFactory.CreateFromObject(new NewsKernelPlugin(_marketAux), "NewsPlugin")),
+                    KernelPluginFactory.CreateFromObject(new NewsKernelPlugin(_marketAux, _loggerFactory.CreateLogger<NewsKernelPlugin>()), "NewsPlugin")),
                 BuildAgent(AgentNames.Risk, PortfolioReviewOrchestrator.RiskAgentInstructions, autoInvoke,
                     KernelPluginFactory.CreateFromObject(new SentimentKernelPlugin(_sentiment), "SentimentPlugin")),
                 BuildAgent(AgentNames.Report, PortfolioReviewOrchestrator.ReportAgentInstructions),

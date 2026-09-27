@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\Finance.Integrations.MarketAux\Finance.Integrations.MarketAux.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Messaging\Finance.SharedKernel.Messaging.csproj" />
   </ItemGroup>
 

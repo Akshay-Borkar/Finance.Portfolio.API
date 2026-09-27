@@ -8,6 +8,7 @@ WORKDIR /src
 # Central Package Management: every csproj omits Version, so the restore fails without this.
 COPY Directory.Packages.props ./
 COPY shared/Finance.Contracts/ shared/Finance.Contracts/
+COPY shared/Finance.Integrations.MarketAux/ shared/Finance.Integrations.MarketAux/
 COPY shared/Finance.SharedKernel.Auth/ shared/Finance.SharedKernel.Auth/
 COPY shared/Finance.SharedKernel.Logging/ shared/Finance.SharedKernel.Logging/
 COPY shared/Finance.SharedKernel.Messaging/ shared/Finance.SharedKernel.Messaging/

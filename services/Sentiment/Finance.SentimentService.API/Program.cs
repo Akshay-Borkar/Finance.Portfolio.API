@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddSharedLogging(SentimentConstants.ServiceName);
 builder.AddSharedTelemetry(SentimentConstants.ServiceName);
 
-builder.Services.AddSentimentInfrastructure();
+builder.Services.AddSentimentInfrastructure(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
