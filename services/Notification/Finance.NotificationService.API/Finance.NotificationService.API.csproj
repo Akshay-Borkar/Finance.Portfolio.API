@@ -8,13 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MessagePack" Version="2.5.187" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+    <!-- Direct pin: Microsoft.AspNetCore.OpenApi 10.0.x resolves Microsoft.OpenApi 2.0.0, which
+         has a high-severity advisory. 2.12.2 is the newest within the same major. -->
+    <PackageReference Include="Microsoft.OpenApi" Version="2.12.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.StackExchangeRedis" Version="10.0.6" />
+    <!-- Direct pin: the SignalR Redis backplane resolves MessagePack 2.5.187, which carries one
+         high and eight moderate advisories. 2.5.305 is the newest 2.5.x, so same wire format. -->
+    <PackageReference Include="MessagePack" Version="2.5.305" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.15" />
   </ItemGroup>
 
