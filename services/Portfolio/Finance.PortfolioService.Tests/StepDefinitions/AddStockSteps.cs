@@ -2,10 +2,11 @@ using Finance.Contracts.Events;
 using Finance.PortfolioService.Application.Contracts.MarketData;
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.PortfolioService.Application.Features.Portfolio.Commands.AddStock;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using Finance.PortfolioService.Tests.Support;
 using FluentAssertions;
 using MassTransit;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Reqnroll;
 
@@ -47,7 +48,11 @@ public class AddStockSteps
             .Setup(p => p.Publish(It.IsAny<StockAdded>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var handler = new AddStockCommandHandler(_stockRepo.Object, _marketData.Object, _publisher.Object);
+        var handler = new AddStockCommandHandler(
+            _stockRepo.Object,
+            _marketData.Object,
+            _publisher.Object,
+            NullLogger<AddStockCommandHandler>.Instance);
         _result = await handler.Handle(new AddStockCommand
         {
             Ticker = ticker,

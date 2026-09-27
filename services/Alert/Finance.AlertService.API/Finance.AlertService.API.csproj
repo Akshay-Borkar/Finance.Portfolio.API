@@ -9,13 +9,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.15" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.AlertService.Application\Finance.AlertService.Application.csproj" />
     <ProjectReference Include="..\Finance.AlertService.Infrastructure\Finance.AlertService.Infrastructure.csproj" />
-    <ProjectReference Include="..\Finance.AlertService.Persistence\Finance.AlertService.Persistence.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Logging\Finance.SharedKernel.Logging.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Telemetry\Finance.SharedKernel.Telemetry.csproj" />

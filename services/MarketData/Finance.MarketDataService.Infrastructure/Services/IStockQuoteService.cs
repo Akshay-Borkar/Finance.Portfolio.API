@@ -1,6 +1,6 @@
-using Finance.MarketDataService.Application.Models;
+using Finance.MarketDataService.Infrastructure.Models;
 
-namespace Finance.MarketDataService.Application.Contracts;
+namespace Finance.MarketDataService.Infrastructure.Services;
 
 public interface IStockQuoteService
 {

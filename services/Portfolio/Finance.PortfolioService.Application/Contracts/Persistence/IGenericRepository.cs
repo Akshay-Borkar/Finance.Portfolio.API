@@ -1,4 +1,4 @@
-using Finance.PortfolioService.Domain.Common;
+using Finance.PortfolioService.Application.Common;
 
 namespace Finance.PortfolioService.Application.Contracts.Persistence;
 

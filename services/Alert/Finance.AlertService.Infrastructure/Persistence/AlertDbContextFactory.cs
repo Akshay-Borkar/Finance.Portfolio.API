@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace Finance.AlertService.Persistence.DatabaseContext;
+namespace Finance.AlertService.Infrastructure.Persistence;
 
 public class AlertDbContextFactory : IDesignTimeDbContextFactory<AlertDbContext>
 {

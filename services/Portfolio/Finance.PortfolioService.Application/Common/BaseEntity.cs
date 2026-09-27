@@ -1,4 +1,4 @@
-namespace Finance.PortfolioService.Domain.Common;
+namespace Finance.PortfolioService.Application.Common;
 
 public abstract class BaseEntity
 {

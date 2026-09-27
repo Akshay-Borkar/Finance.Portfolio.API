@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Finance.AlertService.Persistence.Migrations
+namespace Finance.AlertService.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitialAlert : Migration

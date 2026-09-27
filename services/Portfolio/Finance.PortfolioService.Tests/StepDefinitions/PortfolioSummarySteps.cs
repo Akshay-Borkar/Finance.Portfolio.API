@@ -1,9 +1,10 @@
 using Finance.PortfolioService.Application.Contracts.MarketData;
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.PortfolioService.Application.Features.Portfolio.Queries.GetPortfolioSummary;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using Finance.PortfolioService.Tests.Support;
 using FluentAssertions;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Reqnroll;
 
@@ -68,7 +69,11 @@ public class PortfolioSummarySteps
         _stockRepo.Setup(r => r.GetStocksByUserId(_ctx.UserId)).ReturnsAsync(_stocks);
         _investmentRepo.Setup(r => r.GetPortfolioByUserId(_ctx.UserId)).ReturnsAsync(_investments);
 
-        var handler = new GetPortfolioSummaryQueryHandler(_investmentRepo.Object, _stockRepo.Object, _marketData.Object);
+        var handler = new GetPortfolioSummaryQueryHandler(
+            _investmentRepo.Object,
+            _stockRepo.Object,
+            _marketData.Object,
+            NullLogger<GetPortfolioSummaryQueryHandler>.Instance);
         _result = await handler.Handle(new GetPortfolioSummaryQuery(_ctx.UserId), CancellationToken.None);
     }
 

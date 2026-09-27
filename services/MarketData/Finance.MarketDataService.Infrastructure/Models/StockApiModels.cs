@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Finance.MarketDataService.Application.Models;
+namespace Finance.MarketDataService.Infrastructure.Models;
 
 public class StockMarketDataDto
 {

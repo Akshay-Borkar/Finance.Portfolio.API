@@ -1,5 +1,5 @@
 using Finance.PortfolioService.Application.Contracts.Persistence;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using MediatR;
 
 namespace Finance.PortfolioService.Application.Features.Portfolio.Commands.AddInvestment;

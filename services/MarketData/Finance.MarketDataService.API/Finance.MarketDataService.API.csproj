@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Finance.MarketDataService.Application\Finance.MarketDataService.Application.csproj" />
     <ProjectReference Include="..\Finance.MarketDataService.Infrastructure\Finance.MarketDataService.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Auth\Finance.SharedKernel.Auth.csproj" />

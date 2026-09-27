@@ -1,6 +1,6 @@
-using Finance.AlertService.Domain.Common;
+using Finance.AlertService.Application.Common;
 
-namespace Finance.AlertService.Domain.Entities;
+namespace Finance.AlertService.Application.Entities;
 
 public enum AlertCondition { Above, Below }
 

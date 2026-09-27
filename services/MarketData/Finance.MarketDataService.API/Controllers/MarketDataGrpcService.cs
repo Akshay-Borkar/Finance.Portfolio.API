@@ -1,5 +1,6 @@
 using Finance.MarketDataService.API.Protos;
-using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Redis;
+using Finance.MarketDataService.Infrastructure.Services;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Grpc.Core;
 

@@ -1,8 +1,8 @@
-using Finance.AlertService.Domain.Common;
-using Finance.AlertService.Domain.Entities;
+using Finance.AlertService.Application.Common;
+using Finance.AlertService.Application.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Finance.AlertService.Persistence.DatabaseContext;
+namespace Finance.AlertService.Infrastructure.Persistence;
 
 public class AlertDbContext : DbContext
 {

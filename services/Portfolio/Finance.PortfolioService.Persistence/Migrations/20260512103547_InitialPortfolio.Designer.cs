@@ -25,7 +25,7 @@ namespace Finance.PortfolioService.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Finance.PortfolioService.Domain.Entities.Investment", b =>
+            modelBuilder.Entity("Finance.PortfolioService.Application.Entities.Investment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -62,7 +62,7 @@ namespace Finance.PortfolioService.Persistence.Migrations
                     b.ToTable("Investments");
                 });
 
-            modelBuilder.Entity("Finance.PortfolioService.Domain.Entities.Stock", b =>
+            modelBuilder.Entity("Finance.PortfolioService.Application.Entities.Stock", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +110,7 @@ namespace Finance.PortfolioService.Persistence.Migrations
                     b.ToTable("Stocks");
                 });
 
-            modelBuilder.Entity("Finance.PortfolioService.Domain.Entities.StockSector", b =>
+            modelBuilder.Entity("Finance.PortfolioService.Application.Entities.StockSector", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,9 +161,9 @@ namespace Finance.PortfolioService.Persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Finance.PortfolioService.Domain.Entities.Investment", b =>
+            modelBuilder.Entity("Finance.PortfolioService.Application.Entities.Investment", b =>
                 {
-                    b.HasOne("Finance.PortfolioService.Domain.Entities.Stock", "StockDetails")
+                    b.HasOne("Finance.PortfolioService.Application.Entities.Stock", "StockDetails")
                         .WithMany()
                         .HasForeignKey("StockDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -172,9 +172,9 @@ namespace Finance.PortfolioService.Persistence.Migrations
                     b.Navigation("StockDetails");
                 });
 
-            modelBuilder.Entity("Finance.PortfolioService.Domain.Entities.Stock", b =>
+            modelBuilder.Entity("Finance.PortfolioService.Application.Entities.Stock", b =>
                 {
-                    b.HasOne("Finance.PortfolioService.Domain.Entities.StockSector", "StockSector")
+                    b.HasOne("Finance.PortfolioService.Application.Entities.StockSector", "StockSector")
                         .WithMany()
                         .HasForeignKey("StockSectorId")
                         .OnDelete(DeleteBehavior.Cascade)

@@ -1,4 +1,3 @@
-using Finance.MarketDataService.Application.Contracts;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.MarketDataService.Infrastructure.Consumers;
 using Finance.MarketDataService.Infrastructure.Hangfire;

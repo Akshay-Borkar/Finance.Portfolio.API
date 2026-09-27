@@ -1,5 +1,5 @@
 using Finance.MarketDataService.API.Controllers;
-using Finance.MarketDataService.Application.Contracts;
+using Finance.MarketDataService.Infrastructure.Hangfire;
 using Finance.MarketDataService.Infrastructure;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Finance.SharedKernel.Auth;

@@ -10,5 +10,6 @@ public static class AlertConstants
 
     public static class Config
     {
+        public const string DbConnectionName = "AlertDb";
     }
 }

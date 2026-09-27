@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Finance.MarketDataService.Application\Finance.MarketDataService.Application.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.Contracts\Finance.Contracts.csproj" />
     <ProjectReference Include="..\..\..\shared\Finance.SharedKernel.Messaging\Finance.SharedKernel.Messaging.csproj" />
   </ItemGroup>

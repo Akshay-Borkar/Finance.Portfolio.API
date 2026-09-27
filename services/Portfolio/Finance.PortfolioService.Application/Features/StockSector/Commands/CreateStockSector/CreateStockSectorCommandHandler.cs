@@ -1,6 +1,6 @@
 using Finance.PortfolioService.Application.Contracts.Persistence;
 using Finance.SharedKernel.Auth.Exceptions;
-using Finance.PortfolioService.Domain.Entities;
+using Finance.PortfolioService.Application.Entities;
 using MediatR;
 
 namespace Finance.PortfolioService.Application.Features.StockSector.Commands.CreateStockSector;
@@ -22,7 +22,7 @@ public class CreateStockSectorCommandHandler : IRequestHandler<CreateStockSector
         if (validationResult.Errors.Count > 0)
             throw new BadRequestException("Invalid Stock Sector", validationResult);
 
-        var stockSector = new Domain.Entities.StockSector
+        var stockSector = new Entities.StockSector
         {
             Id = Guid.NewGuid(),
             StockSectorName = request.StockSectorName,

@@ -1,4 +1,3 @@
-using Finance.MarketDataService.Application.Contracts;
 using Finance.MarketDataService.Infrastructure.Constants;
 using Newtonsoft.Json;
 using StackExchange.Redis;

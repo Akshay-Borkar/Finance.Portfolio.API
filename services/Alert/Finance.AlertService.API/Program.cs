@@ -1,8 +1,7 @@
 using Finance.SharedKernel.Auth.Middleware;
 using Finance.AlertService.Application;
 using Finance.AlertService.Infrastructure;
-using Finance.AlertService.Persistence;
-using Finance.AlertService.Persistence.DatabaseContext;
+using Finance.AlertService.Infrastructure.Persistence;
 using Finance.SharedKernel.Auth;
 using Finance.SharedKernel.Logging;
 using Finance.SharedKernel.Logging.Middleware;
@@ -18,7 +17,6 @@ builder.AddSharedTelemetry("alert");
 builder.Configuration.AddUserSecrets<Program>();
 
 builder.Services.AddApplicationServices();
-builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSharedJwtAuthentication(builder.Configuration);
 
